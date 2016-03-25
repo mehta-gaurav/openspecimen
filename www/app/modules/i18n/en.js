@@ -200,6 +200,7 @@
 
     "tab": {
       "overview": "Overview",
+      "label_format": "Label Formats & Print Settings",
       "consents": "Consents",
       "events": "Events",
       "users": "Users",

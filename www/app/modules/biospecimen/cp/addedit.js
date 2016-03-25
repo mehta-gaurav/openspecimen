@@ -113,7 +113,11 @@ angular.module('os.biospecimen.cp.addedit', ['os.biospecimen.models', 'os.admini
 
       q.then(
         function(savedCp) {
-          $state.go('cp-detail.overview', {cpId: savedCp.id});
+          if ($stateParams.editLabels) {
+            $state.go('cp-detail.labels', {cpId: savedCp.id});
+          } else {
+            $state.go('cp-detail.overview', {cpId: savedCp.id});
+          }
         }
       );
     };

@@ -167,6 +167,23 @@ angular.module('os.biospecimen.cp',
         controller: 'CpAddEditCtrl',
         parent: 'cps'
       })
+      .state('labels-edit', {
+        url: '/addedit/:cpId/labels?editLabels',
+        templateUrl: 'modules/biospecimen/cp/labels-edit.html',
+        resolve: {
+          cp: function($stateParams, CollectionProtocol) {
+            if ($stateParams.cpId) {
+              return CollectionProtocol.getById($stateParams.cpId);
+            }
+            return new CollectionProtocol();
+          },
+          extensionCtxt: function(CollectionProtocol) {
+            return CollectionProtocol.getExtensionCtxt();
+          }
+        },
+        controller: 'CpAddEditCtrl',
+        parent: 'cps'
+      })
       .state('cp-import', {
         url: '/import',
         templateUrl: 'modules/biospecimen/cp/import.html',
@@ -191,6 +208,11 @@ angular.module('os.biospecimen.cp',
       .state('cp-detail.overview', {
         url: '/overview',
         templateUrl: 'modules/biospecimen/cp/overview.html',
+        parent: 'cp-detail'
+      })
+      .state('cp-detail.labels', {
+        url: '/labels',
+        templateUrl: 'modules/biospecimen/cp/labels-overview.html',
         parent: 'cp-detail'
       })
       .state('cp-detail.consents', {
