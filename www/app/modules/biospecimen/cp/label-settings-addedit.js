@@ -66,7 +66,7 @@ angular.module('os.biospecimen.cp.labels-addedit', ['os.biospecimen.models'])
       return result;
     };
 
-    $scope.createCp = function() {
+    $scope.saveSettings = function() {
       delete $scope.cp.repositoryNames;
       delete $scope.cp.extensionDetail;
       $scope.cp.ppidFmt = getPpidFmt();
