@@ -1,7 +1,11 @@
 <div>
   <div os-page-header>
     <ul os-breadcrumbs>
-      <li> <a ui-sref="cp-list" translate="menu.collection_protocols"></a> </li>
+      <li> 
+        <a ui-sref="cp-list">
+          <span translate="menu.collection_protocols"></span> 
+        </a>
+      </li>
     </ul>
     <h3>
       {{cp.shortTitle}} <span ng-if="codingEnabled && !!cp.code">({{cp.code}})</span>
@@ -46,31 +50,31 @@
     <ul>
      <li ui-sref-active="active">
        <a ui-sref=".overview">
-         <i class="fa fa-eye"></i>
+         <span class="fa fa-eye"></span>
          <span class="os-title" translate="cp.tab.overview">Overview</span>
        </a>
      </li>
-     <li ui-sref-active="active">
-       <a ui-sref=".labels">
-         <i class="fa fa-clipboard"></i>
+     <li ng-class="{'active': includesState('cp-detail.label-settings')}">
+       <a ui-sref=".label-settings.overview">
+         <span class="fa fa-clipboard"></span>
          <span class="os-title" translate="cp.tab.label_format">Label Formats & Print Settings</span>
        </a>
      </li>
      <li ui-sref-active="active">
        <a ui-sref=".consents">
-         <i class="fa fa-pencil-square-o"></i>
+         <span class="fa fa-pencil-square-o"></span>
          <span class="os-title" translate="cp.tab.consents">Consents</span>
        </a>
      </li>
      <li ui-sref-active="active">
        <a ui-sref=".specimen-requirements">
-         <i class="fa fa-list-alt"></i>
+         <span class="fa fa-list-alt"></span>
          <span class="os-title" translate="cp.tab.events">Events</span>
        </a>
      </li>
      <li ui-sref-active="active">
        <a ui-sref=".catalog-settings">
-         <i class="fa fa-search"></i>
+         <span class="fa fa-search"></span>
          <span class="os-title" translate="cp.tab.catalog_settings">Catalog Settings</span>
        </a>
      </li>

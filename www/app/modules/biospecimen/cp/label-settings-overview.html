@@ -1,6 +1,6 @@
 <div class="clearfix">
-  <button show-if-allowed="cpResource.updateOpts" class="btn btn-primary pull-right" title="{{'cp.tooltip.edit' | translate}}" 
-    ui-sref="labels-edit({cpId:cp.id, editLabels: true})">
+  <button show-if-allowed="cpResource.updateOpts" class="btn btn-primary pull-right" title="{{'cp.tooltip.label_settings_edit' | translate}}" 
+    ui-sref="cp-detail.label-settings.edit({cpId:cp.id, editLabels: true})">
     <span class="fa fa-pencil"></span>
     <span translate="common.buttons.edit">Edit</span>
   </button>
@@ -10,7 +10,7 @@
       <div>
         <ul class="os-key-values os-one-col">
           <li class="item">
-            <strong class="key key-sm" translate="cp.label_format.ppid">PPID Format</strong>
+            <strong class="key key-sm"><span translate="cp.label_format.ppid">PPID Format</span></strong>
             <span class="value value-md" ng-if="!cp.ppidFmt" translate="common.not_specified"></span>
             <span class="value value-md" ng-if="!!cp.ppidFmt">
               <span ng-if="ppidFmt.prefix">{{ppidFmt.prefix}}</span>
@@ -22,32 +22,44 @@
           </li>
 
           <li class="item">
-            <strong class="key key-sm" translate="cp.label_format.visit">Visit</strong>
+            <strong class="key key-sm">
+              <span translate="cp.label_format.visit">Visit</span>
+            </strong>
             <span class="value value-md">{{cp.visitNameFmt | osNoValue}}</span>
           </li>
 
           <li class="item">
-            <strong class="key key-sm" translate="cp.label_format.specimen">Specimen</strong>
+            <strong class="key key-sm">
+              <span translate="cp.label_format.specimen">Specimen</span>
+            </strong>
             <span class="value value-md">{{cp.specimenLabelFmt | osNoValue}}</span>
           </li>
 
           <li class="item">
-            <strong class="key key-sm" translate="cp.label_format.aliquot">Aliquot</strong>
+            <strong class="key key-sm">
+              <span translate="cp.label_format.aliquot">Aliquot</span>
+            </strong>
             <span class="value value-md">{{cp.aliquotLabelFmt | osNoValue}}</span>
           </li>
 
           <li class="item">
-            <strong class="key key-sm" translate="cp.label_format.derivative">Derivative</strong>
+            <strong class="key key-sm">
+              <span translate="cp.label_format.derivative">Derivative</span>
+            </strong>
             <span class="value value-md">{{cp.derivativeLabelFmt | osNoValue}}</span>
           </li>
 
           <li class="item">
-            <strong class="key key-sm" translate="cp.label_format.manual">User Inputs Allowed for</strong>
+            <strong class="key key-sm">
+              <span translate="cp.label_format.manual">User Inputs Allowed for</span>
+            </strong>
             <span class="value value-md">{{userInputLabels | osNoValue}}</span>
           </li>
 
           <li class="item">
-            <strong class="key key-sm" translate="cp.pre_print_spmn_labels">Pre Print Specimen Labels</strong>
+            <strong class="key key-sm">
+              <span translate="cp.pre_print_spmn_labels">Pre Print Specimen Labels</span>
+            </strong>
             <span class="value value-md">{{'cp.spmn_label_pre_print_modes.' + cp.spmnLabelPrePrintMode | translate}}</span>
           </li>
         </ul>

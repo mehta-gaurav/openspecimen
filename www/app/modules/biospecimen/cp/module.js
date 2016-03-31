@@ -4,6 +4,7 @@ angular.module('os.biospecimen.cp',
     'ui.router',
     'os.biospecimen.cp.list',
     'os.biospecimen.cp.addedit',
+    'os.biospecimen.cp.labels-addedit',
     'os.biospecimen.cp.import',
     'os.biospecimen.cp.detail',
     'os.biospecimen.cp.consents',
@@ -167,23 +168,6 @@ angular.module('os.biospecimen.cp',
         controller: 'CpAddEditCtrl',
         parent: 'cps'
       })
-      .state('labels-edit', {
-        url: '/addedit/:cpId/labels?editLabels',
-        templateUrl: 'modules/biospecimen/cp/labels-edit.html',
-        resolve: {
-          cp: function($stateParams, CollectionProtocol) {
-            if ($stateParams.cpId) {
-              return CollectionProtocol.getById($stateParams.cpId);
-            }
-            return new CollectionProtocol();
-          },
-          extensionCtxt: function(CollectionProtocol) {
-            return CollectionProtocol.getExtensionCtxt();
-          }
-        },
-        controller: 'CpAddEditCtrl',
-        parent: 'cps'
-      })
       .state('cp-import', {
         url: '/import',
         templateUrl: 'modules/biospecimen/cp/import.html',
@@ -210,10 +194,22 @@ angular.module('os.biospecimen.cp',
         templateUrl: 'modules/biospecimen/cp/overview.html',
         parent: 'cp-detail'
       })
-      .state('cp-detail.labels', {
-        url: '/labels',
-        templateUrl: 'modules/biospecimen/cp/labels-overview.html',
+      .state('cp-detail.label-settings', {
+        url: '/label-settings',
+        template: '<div ui-view></div>',
+        abstract: true,
         parent: 'cp-detail'
+      })
+      .state('cp-detail.label-settings.overview', {
+        url: '/overview',
+        templateUrl: 'modules/biospecimen/cp/label-settings-overview.html',
+        parent: 'cp-detail.label-settings'
+      })
+      .state('cp-detail.label-settings.edit', {
+        url: '/edit-settings',
+        templateUrl: 'modules/biospecimen/cp/label-settings-addedit.html',
+        controller: 'LabelsAddEditCtrl',
+        parent: 'cp-detail.label-settings'
       })
       .state('cp-detail.consents', {
         url: '/consents',

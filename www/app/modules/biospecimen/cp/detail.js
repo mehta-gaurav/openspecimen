@@ -4,7 +4,6 @@ angular.module('os.biospecimen.cp.detail', ['os.biospecimen.models'])
 
     function init() {
       $scope.cp = cp;
-      $scope.ppidFmt = cp.getUiPpidFmt();
       $scope.cp.repositoryNames = cp.getRepositoryNames();
       $scope.downloadUri = CollectionProtocol.url() + cp.id + '/definition';
       $scope.sites = PvManager.getSites();
@@ -12,7 +11,13 @@ angular.module('os.biospecimen.cp.detail', ['os.biospecimen.models'])
       var opts = {sites: cp.repositoryNames, cp: cp.shortTitle};
       angular.extend($scope.cpResource.updateOpts, opts);
       angular.extend($scope.cpResource.deleteOpts, opts);
-
+      
+      $scope.processLabelFmts();
+    }
+    
+    $scope.processLabelFmts = function() {
+      $scope.ppidFmt = cp.getUiPpidFmt();
+      
       $scope.userInputLabels = '';
       $translate('cp.label_format.ppid').then(
         function() {

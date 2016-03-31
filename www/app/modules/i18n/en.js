@@ -219,7 +219,8 @@
       "edit": "Click to edit Collection Protocol",
       "reg_participants_count": "Count of Registered Participants",
       "collected_specimens_count": "Count of Collected Specimens",
-      "search": "Click to search Collection Protocols"
+      "search": "Click to search Collection Protocols",
+      "label_settings_edit": "Click to edit Label settings"
     },
 
     "filter": {
