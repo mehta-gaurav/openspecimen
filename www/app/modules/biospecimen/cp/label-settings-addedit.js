@@ -1,11 +1,10 @@
 
 angular.module('os.biospecimen.cp.labels-addedit', ['os.biospecimen.models'])
   .controller('LabelsAddEditCtrl', function(
-    $scope, $state, cp, $stateParams, PvManager) {
+    $scope, $state, $stateParams, cp, PvManager) {
 
     function init() {
       $scope.cp = angular.copy(cp);
-      $scope.ppidFmt = cp.getUiPpidFmt();
 
       if (!cp.spmnLabelPrintSettings || cp.spmnLabelPrintSettings.length == 0) {
         $scope.cp.spmnLabelPrintSettings = [
@@ -16,21 +15,6 @@ angular.module('os.biospecimen.cp.labels-addedit', ['os.biospecimen.models'])
       }
 
       loadPvs();
-
-      $scope.$watch('ppidFmt', function(newVal) {
-        var sample = newVal.prefix || '';
-
-        if (newVal.digitsWidth && newVal.digitsWidth > 0) {
-          for (var i = 0; i < newVal.digitsWidth - 1; ++i) {
-            sample += '0';
-          }
-
-          sample += '7';  
-        }
-
-        sample += (newVal.suffix || '');
-        $scope.ppidFmt.samplePpid = sample;
-      }, true);
     };
 
     function loadPvs() {
@@ -56,20 +40,9 @@ angular.module('os.biospecimen.cp.labels-addedit', ['os.biospecimen.models'])
       );
     }
 
-    function getPpidFmt() {
-      var result = $scope.ppidFmt.prefix || '';
-      if ($scope.ppidFmt.digitsWidth) {
-        result += '%0' + $scope.ppidFmt.digitsWidth + 'd';
-      }
-
-      result += ($scope.ppidFmt.suffix || '');
-      return result;
-    };
-
     $scope.saveSettings = function() {
       delete $scope.cp.repositoryNames;
       delete $scope.cp.extensionDetail;
-      $scope.cp.ppidFmt = getPpidFmt();
       
       $scope.cp.$saveOrUpdate().then(
         function(savedCp) {

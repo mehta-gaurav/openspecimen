@@ -16,8 +16,6 @@ angular.module('os.biospecimen.cp.detail', ['os.biospecimen.models'])
     }
     
     $scope.processLabelFmts = function() {
-      $scope.ppidFmt = cp.getUiPpidFmt();
-      
       $scope.userInputLabels = '';
       $translate('cp.label_format.ppid').then(
         function() {
