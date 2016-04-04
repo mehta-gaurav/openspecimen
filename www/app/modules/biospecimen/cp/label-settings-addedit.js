@@ -1,7 +1,7 @@
 
 angular.module('os.biospecimen.cp.labels-addedit', ['os.biospecimen.models'])
   .controller('LabelsAddEditCtrl', function(
-    $scope, $state, $stateParams, cp, PvManager) {
+    $scope, $state, cp, PvManager) {
 
     function init() {
       $scope.cp = angular.copy(cp);
