@@ -4,7 +4,8 @@ angular.module('os.biospecimen.cp',
     'ui.router',
     'os.biospecimen.cp.list',
     'os.biospecimen.cp.addedit',
-    'os.biospecimen.cp.labels-addedit',
+    'os.biospecimen.cp.label-settings-overview',
+    'os.biospecimen.cp.label-settings-addedit',
     'os.biospecimen.cp.import',
     'os.biospecimen.cp.detail',
     'os.biospecimen.cp.consents',
@@ -203,12 +204,13 @@ angular.module('os.biospecimen.cp',
       .state('cp-detail.label-settings.overview', {
         url: '/overview',
         templateUrl: 'modules/biospecimen/cp/label-settings-overview.html',
+        controller: 'CpLabelSettingsOverviewCtrl',
         parent: 'cp-detail.label-settings'
       })
-      .state('cp-detail.label-settings.edit', {
-        url: '/edit-settings',
+      .state('cp-detail.label-settings.addedit', {
+        url: '/addedit',
         templateUrl: 'modules/biospecimen/cp/label-settings-addedit.html',
-        controller: 'LabelsAddEditCtrl',
+        controller: 'CpLabelSettingsAddEditCtrl',
         parent: 'cp-detail.label-settings'
       })
       .state('cp-detail.consents', {
