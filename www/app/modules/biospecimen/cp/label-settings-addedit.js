@@ -1,7 +1,6 @@
 
 angular.module('os.biospecimen.cp.label-settings-addedit', ['os.biospecimen.models'])
-  .controller('CpLabelSettingsAddEditCtrl', function(
-    $scope, $state, cp, PvManager) {
+  .controller('CpLabelSettingsAddEditCtrl', function($scope, $state, cp, PvManager) {
 
     function init() {
       $scope.cp = angular.copy(cp);
@@ -46,7 +45,9 @@ angular.module('os.biospecimen.cp.label-settings-addedit', ['os.biospecimen.mode
       
       $scope.cp.$saveOrUpdate().then(
         function(savedCp) {
-          angular.extend(cp, savedCp);                     // updating resolved cp to use updated values on overview page.
+          // Keep cp object updated with saved label settings.
+          angular.extend(cp, savedCp);
+          
           $state.go('cp-detail.label-settings.overview');
         }
       );
