@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.saml.metadata.MetadataManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +32,9 @@ public class AuthenticationController {
 	
 	@Autowired
 	private UserAuthenticationService userAuthService;
+	
+	@Autowired
+	MetadataManager metadataManager;
 
 	@Autowired
 	private HttpServletRequest httpReq;
@@ -68,5 +72,20 @@ public class AuthenticationController {
 		resp.throwErrorIfUnsuccessful();
 
 		return Collections.singletonMap("Status", resp.getPayload());
+	}
+	
+	@RequestMapping(method = RequestMethod.GET,  value = "/saml-config")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public Boolean isSamlConfigured () {
+		return userAuthService.isSamlConfigured();
+	}
+	
+	@RequestMapping(method = RequestMethod.GET,  value = "/saml")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public String getSamlDetails () {
+		String entityName = metadataManager.getIDPEntityNames().iterator().next();
+		return entityName;
 	}
 }

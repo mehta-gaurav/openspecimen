@@ -20,10 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.codec.Base64;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -219,7 +216,9 @@ public class AuthTokenFilter extends GenericFilterBean {
 			if (authTokenParts.length == 2) {
 				try {
 					authToken = URLDecoder.decode(authTokenParts[1], "utf-8");
-					authToken = authToken.substring(1, authToken.length() - 1);
+					if (authToken.startsWith("%")) {
+						authToken = authToken.substring(1, authToken.length() - 1);
+					}
 				} catch (Exception e) {
 					
 				}				

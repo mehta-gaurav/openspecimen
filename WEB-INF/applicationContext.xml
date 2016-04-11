@@ -262,6 +262,7 @@
   <bean id="userAuthService" class="com.krishagni.catissueplus.core.auth.services.impl.UserAuthenticationServiceImpl">
     <property name="daoFactory" ref="biospecimenDaoFactory"/>
     <property name="auditService" ref="auditService"/>
+    <property name="isSamlEnabled" value="${app.is_saml_enabled}"/>
   </bean>
 
   <bean id="specimenSvc" class="com.krishagni.catissueplus.core.biospecimen.services.impl.SpecimenServiceImpl">
@@ -488,7 +489,9 @@
 
   <bean id="appCtxProvider" class="com.krishagni.catissueplus.core.common.OpenSpecimenAppCtxProvider"/>
   
-  <security:authentication-manager alias="authenticationManager">
+  <security:authentication-manager alias="authManager">
+    <!-- Register authentication manager for SAML provider -->
+    <security:authentication-provider ref="samlAuthenticationProvider"/>
     <security:authentication-provider user-service-ref="userSvc" >
        <security:password-encoder ref="passwordEncoder"></security:password-encoder>
     </security:authentication-provider>
@@ -515,6 +518,8 @@
             <value>/config-settings/app-props</value>
             <value>/config-settings/welcome-video</value>
             <value>/auth-domains/</value>
+            <value>/saml</value>
+            <value>/saml-config</value>
           </list>
         </entry>
       </map>

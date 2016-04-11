@@ -38,12 +38,18 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 	
 	private AuditService auditService;
 	
+	private Boolean isSamlEnabled;
+	
 	public void setDaoFactory(DaoFactory daoFactory) {
 		this.daoFactory = daoFactory;
 	}
 	
 	public void setAuditService(AuditService auditService) {
 		this.auditService = auditService;
+	}
+	
+	public void setIsSamlEnabled(Boolean isSamlEnabled) {
+		this.isSamlEnabled = isSamlEnabled;
 	}
 
 	@Override
@@ -69,22 +75,12 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 			AuthenticationService authService = user.getAuthDomain().getAuthProviderInstance();
 			authService.authenticate(loginDetail.getLoginName(), loginDetail.getPassword());
 			
-			LoginAuditLog loginAuditLog = insertLoginAudit(user, loginDetail.getIpAddress(), true);
 			Map<String, Object> authDetail = new HashMap<String, Object>();
 			authDetail.put("user", user);
- 
-			if (!loginDetail.isDoNotGenerateToken()) {
-				String token = UUID.randomUUID().toString();
-				
-				AuthToken authToken = new AuthToken();
-				authToken.setIpAddress(loginDetail.getIpAddress());
-				authToken.setToken(token);
-				authToken.setUser(user);
-				authToken.setLoginAuditLog(loginAuditLog);
-				daoFactory.getAuthDao().saveAuthToken(authToken);
-				
-				insertApiCallLog(loginDetail, user, token);
-				authDetail.put("token", AuthUtil.encodeToken(token));
+			
+			String authToken = generateToken(user, loginDetail);
+			if (authToken != null) {
+				authDetail.put("token", authToken);
 			}
 			
 			return ResponseEvent.response(authDetail);
@@ -164,6 +160,30 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.MINUTE, -AuthConfig.getInstance().getTokenInactiveIntervalInMinutes());
 		daoFactory.getAuthDao().deleteInactiveAuthTokens(cal.getTime());
+	}
+	
+	@Override
+	public Boolean isSamlConfigured() {
+		return isSamlEnabled;
+	}
+	
+	public String generateToken(User user, LoginDetail loginDetail) {
+		LoginAuditLog loginAuditLog = insertLoginAudit(user, loginDetail.getIpAddress(), true);
+		String token = null;
+		if (!loginDetail.isDoNotGenerateToken()) {
+			token = UUID.randomUUID().toString();
+			
+			AuthToken authToken = new AuthToken();
+			authToken.setIpAddress(loginDetail.getIpAddress());
+			authToken.setToken(token);
+			authToken.setUser(user);
+			authToken.setLoginAuditLog(loginAuditLog);
+			daoFactory.getAuthDao().saveAuthToken(authToken);
+			
+			insertApiCallLog(loginDetail, user, token);
+		}
+		
+		return token == null ? null : AuthUtil.encodeToken(token);
 	}
 	
 	private LoginAuditLog insertLoginAudit(User user, String ipAddress, boolean loginSuccessful) {

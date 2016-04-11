@@ -18,4 +18,6 @@ public interface UserAuthenticationService {
 	
 	public ResponseEvent<String> removeToken(RequestEvent<String> req);
 	
+	public Boolean isSamlConfigured();
+	
 }

@@ -834,6 +834,7 @@
     "sign_in": "Sign In",
     "logout":"Log Out",
     "forgot_password": "Forgot password?",
+    "saml_login": "SAML Login",
     "approve_user": "Approve User",
     "reject_user": "Reject User",
     "request_pending": "Note: {{firstName}}  {{lastName}} would like to access OpenSpecimen. Approve or Reject?",
