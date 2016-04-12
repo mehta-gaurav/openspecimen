@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.saml.SAMLCredential;
 
 import com.krishagni.catissueplus.core.administrative.domain.ForgotPasswordToken;
 import com.krishagni.catissueplus.core.administrative.domain.Institute;
@@ -91,6 +92,18 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		return daoFactory.getUserDao().getUser(username, DEFAULT_AUTH_DOMAIN);
+	}
+	
+	@Override
+	@PlusTransactional
+	public Object loadUserBySAML(SAMLCredential credential) throws UsernameNotFoundException {
+		String email = credential.getAttributeAsString("EmailAddress");
+		User user = daoFactory.getUserDao().getUserByEmailAddress(email);
+		if (user == null) {
+			throw new UsernameNotFoundException("User not found");
+		}
+		
+		return user;
 	}
 
 	@Override

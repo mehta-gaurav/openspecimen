@@ -214,7 +214,7 @@ osApp.config(function(
     }
   })
   .run(function(
-    $rootScope, $window, $document, $cookieStore, $q,  $state, $translate, $translatePartialLoader,
+    $rootScope, $window, $document, $http, $cookies, $q,  $state, $translate, $translatePartialLoader,
     LocationChangeListener, ApiUtil, Setting, PluginReg) {
 
     $document.on('click', '.dropdown-menu.dropdown-menu-form', function(e) {
@@ -222,7 +222,11 @@ osApp.config(function(
     });
 
     if ($window.localStorage['osAuthToken']) {
-      $cookieStore.put('osAuthToken', $window.localStorage['osAuthToken']);
+      $cookies['osAuthToken'] = $window.localStorage['osAuthToken'];
+      $rootScope.loggedIn = true;
+    } else if ($cookies['osAuthToken']) {
+      $window.localStorage['osAuthToken'] = $cookies['osAuthToken'];
+      $http.defaults.headers.common['X-OS-API-TOKEN'] = $cookies['osAuthToken'];
       $rootScope.loggedIn = true;
     }
 

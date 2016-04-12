@@ -141,8 +141,6 @@
               <property name="requireLogoutRequestSigned" value="false"/>
               <property name="requireLogoutResponseSigned" value="false"/>
               <property name="idpDiscoveryEnabled" value="true"/>
-              <property name="idpDiscoveryURL" value="http://localhost:9090/openspecimen/saml/discovery"/>
-              <property name="idpDiscoveryResponseURL" value="http://localhost:9090/openspecimen/saml/login?disco=true"/>
             </bean>
           </constructor-arg>
         </bean>
@@ -190,7 +188,10 @@
   <!-- SAML 2.0 ECP profile -->
   <bean id="ecpprofile" class="org.springframework.security.saml.websso.WebSSOProfileECPImpl"/>
 
-  <bean id="samlAuthenticationProvider" class="org.springframework.security.saml.SAMLAuthenticationProvider"/>
+  <bean id="samlAuthenticationProvider" class="org.springframework.security.saml.SAMLAuthenticationProvider">
+    <property name="userDetails" ref="userSvc"/>
+    <property name="forcePrincipalAsString" value="false"/>
+  </bean>
 
   <bean id="samlWebSSOProcessingFilter" class="org.springframework.security.saml.SAMLProcessingFilter">
     <property name="authenticationManager" ref="authManager"/>
@@ -199,8 +200,7 @@
   </bean>
 
   <bean id="successRedirectHandler" class="com.krishagni.catissueplus.core.auth.OsSimpleUrlAuthenticationSuccessHandler">
-    <property name="defaultTargetUrl" value="/"/>
-    <property name="daoFactory" ref="biospecimenDaoFactory"/>
+    <property name="defaultTargetUrl" value="/#/home"/>
     <property name="userAuthService" ref="userAuthService"/>
   </bean>
 
