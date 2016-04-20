@@ -240,25 +240,6 @@ angular.module('os.biospecimen.cp',
         },
         controller: 'CpSpecimensCtrl'
       })
-      .state('cp-detail.catalog-settings', {
-        url: '/catalog-settings',
-        templateUrl: 'modules/biospecimen/cp/catalog-settings.html',
-        parent: 'cp-detail',
-        resolve: {
-          catalogSetting: function(cp) {
-            if (cp.catalogSetting) {
-              return cp.catalogSetting;
-            }
-
-            return cp.getCatalogSetting().then(
-              function(setting) {
-                cp.catalogSetting = setting || {};
-              }
-            );
-          }
-        },
-        controller: 'CpCatalogSettingsCtrl'
-      })
       .state('cp-detail.settings', {
         url: '/settings',
         templateUrl: 'modules/biospecimen/cp/settings.html',

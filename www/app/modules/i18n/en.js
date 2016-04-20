@@ -261,7 +261,7 @@
       "Aliquot": "Aliquot"
     },
     
-    "edit_settings": "Show settings for"
+    "show_settings": "Show settings for"
   },
 
   "participant": {
