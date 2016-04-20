@@ -4,14 +4,15 @@ angular.module('os.biospecimen.cp',
     'ui.router',
     'os.biospecimen.cp.list',
     'os.biospecimen.cp.addedit',
-    'os.biospecimen.cp.label-settings-overview',
-    'os.biospecimen.cp.label-settings-addedit',
     'os.biospecimen.cp.import',
     'os.biospecimen.cp.detail',
     'os.biospecimen.cp.consents',
     'os.biospecimen.cp.events',
     'os.biospecimen.cp.specimens',
-    'os.biospecimen.cp.catalog'
+    'os.biospecimen.cp.settings',
+    'os.biospecimen.cp.label-settings',
+    'os.biospecimen.cp.catalog',
+    'os.biospecimen.cp.setting-entities'
   ])
 
   .config(function($stateProvider) {
@@ -195,24 +196,6 @@ angular.module('os.biospecimen.cp',
         templateUrl: 'modules/biospecimen/cp/overview.html',
         parent: 'cp-detail'
       })
-      .state('cp-detail.label-settings', {
-        url: '/label-settings',
-        template: '<div ui-view></div>',
-        abstract: true,
-        parent: 'cp-detail'
-      })
-      .state('cp-detail.label-settings.overview', {
-        url: '/overview',
-        templateUrl: 'modules/biospecimen/cp/label-settings-overview.html',
-        controller: 'CpLabelSettingsOverviewCtrl',
-        parent: 'cp-detail.label-settings'
-      })
-      .state('cp-detail.label-settings.addedit', {
-        url: '/addedit',
-        templateUrl: 'modules/biospecimen/cp/label-settings-addedit.html',
-        controller: 'CpLabelSettingsAddEditCtrl',
-        parent: 'cp-detail.label-settings'
-      })
       .state('cp-detail.consents', {
         url: '/consents',
         templateUrl: 'modules/biospecimen/cp/consents.html',
@@ -254,6 +237,38 @@ angular.module('os.biospecimen.cp',
         url: '/catalog-settings',
         templateUrl: 'modules/biospecimen/cp/catalog-settings.html',
         parent: 'cp-detail',
+        resolve: {
+          catalogSetting: function(cp) {
+            if (cp.catalogSetting) {
+              return cp.catalogSetting;
+            }
+
+            return cp.getCatalogSetting().then(
+              function(setting) {
+                cp.catalogSetting = setting || {};
+              }
+            );
+          }
+        },
+        controller: 'CpCatalogSettingsCtrl'
+      })
+      .state('cp-detail.settings', {
+        url: '/settings',
+        templateUrl: 'modules/biospecimen/cp/settings.html',
+        parent: 'cp-detail',
+        controller: 'SettingsCtrl',
+        abstract: true
+      })
+      .state('cp-detail.settings.label-settings', {
+        url: '/label-settings',
+        templateUrl: 'modules/biospecimen/cp/label-settings.html',
+        parent: 'cp-detail.settings',
+        controller: 'LabelSettingsCtrl'
+      })
+      .state('cp-detail.settings.catalog-settings', {
+        url: '/catalog-settings',
+        templateUrl: 'modules/biospecimen/cp/catalog-settings.html',
+        parent: 'cp-detail.settings',
         resolve: {
           catalogSetting: function(cp) {
             if (cp.catalogSetting) {

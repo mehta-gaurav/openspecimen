@@ -46,32 +46,26 @@
     <ul>
      <li ui-sref-active="active">
        <a ui-sref=".overview">
-         <span class="fa fa-eye"></span>
+         <i class="fa fa-eye"></i>
          <span class="os-title" translate="cp.tab.overview">Overview</span>
-       </a>
-     </li>
-     <li ng-class="{'active': includesState('cp-detail.label-settings')}">
-       <a ui-sref=".label-settings.overview">
-         <span class="fa fa-clipboard"></span>
-         <span class="os-title" translate="cp.tab.label_format">Label Formats & Print Settings</span>
        </a>
      </li>
      <li ui-sref-active="active">
        <a ui-sref=".consents">
-         <span class="fa fa-pencil-square-o"></span>
+         <i class="fa fa-pencil-square-o"></i>
          <span class="os-title" translate="cp.tab.consents">Consents</span>
        </a>
      </li>
      <li ui-sref-active="active">
        <a ui-sref=".specimen-requirements">
-         <span class="fa fa-list-alt"></span>
+         <i class="fa fa-list-alt"></i>
          <span class="os-title" translate="cp.tab.events">Events</span>
        </a>
      </li>
-     <li ui-sref-active="active">
-       <a ui-sref=".catalog-settings">
-         <span class="fa fa-search"></span>
-         <span class="os-title" translate="cp.tab.catalog_settings">Catalog Settings</span>
+     <li ng-class="{'active': includesState('cp-detail.settings')}">
+       <a ui-sref=".settings.label-settings">
+         <span class="fa fa-wrench"></span>
+         <span class="os-title" translate="cp.tab.settings">Settings</span>
        </a>
      </li>
 

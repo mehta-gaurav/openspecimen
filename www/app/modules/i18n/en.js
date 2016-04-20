@@ -198,11 +198,11 @@
 
     "tab": {
       "overview": "Overview",
-      "label_format": "Label Formats & Print Settings",
       "consents": "Consents",
       "events": "Events",
       "users": "Users",
-      "catalog_settings": "Catalog Settings"
+      "catalog_settings": "Catalog Settings",
+      "settings": "Settings"
     },
 
     "menu_options": {
@@ -217,8 +217,7 @@
       "edit": "Click to edit Collection Protocol",
       "reg_participants_count": "Count of Registered Participants",
       "collected_specimens_count": "Count of Collected Specimens",
-      "search": "Click to search Collection Protocols",
-      "label_settings_edit": "Click to edit Label settings"
+      "search": "Click to search Collection Protocols"
     },
 
     "filter": {
@@ -230,10 +229,10 @@
       "select_repository": "Select Repository"
     },
 
-    "label_formats" : "Label Formats",
     "anticipated_participant_count": "Expected Registrations",
 
     "label_format": {
+      "title": "Label Format and Print",
       "specimen": "Specimen",
       "visit": "Visit",
       "aliquot": "Aliquot",
@@ -243,7 +242,7 @@
     },
 
     "catalog": {
-      "title": "Catalog Settings",
+      "title": "Catalog",
       "query": "Query",
       "query_desc": "Select saved query to use for Specimen Catalog"
     },
@@ -257,7 +256,9 @@
       "New": "Primary",
       "Derived": "Derivative",
       "Aliquot": "Aliquot"
-    }
+    },
+    
+    "edit_settings": "Edit Settings For"
   },
 
   "participant": {
