@@ -201,7 +201,6 @@
       "consents": "Consents",
       "events": "Events",
       "users": "Users",
-      "catalog_settings": "Catalog Settings",
       "settings": "Settings"
     },
 
@@ -258,7 +257,7 @@
       "Aliquot": "Aliquot"
     },
     
-    "edit_settings": "Edit Settings For"
+    "edit_settings": "Show settings for"
   },
 
   "participant": {

@@ -117,7 +117,7 @@
                 {{'cp.spmn_lineages.' + setting.lineage | translate}}
               </label>
               <div class="col-xs-3">
-                <os-select ng-model="setting.printMode" list="spmnLabelAutoPrintModes" display-prop="displayName" select-prop="name">
+                <os-select ng-model="setting.printMode" list="spmnLabelAutoPrintModes" display-prop="displayName">
                 </os-select>
               </div>
               <div class="col-xs-3">
@@ -171,7 +171,7 @@
             
             <div class="os-section os-line-section col-xs-8">
               <strong class="key key-sm" translate="cp.print_settings">Print Settings</strong>
-              <span ng-if="cp.spmnLabelPrintSettings.length == 0" translate="common.none">None</span>
+              <span ng-if="settingCtx.cp.spmnLabelPrintSettings.length == 0" translate="common.none">None</span>
               <table class="os-table os-table-muted-hdr os-border" ng-if="settingCtx.cp.spmnLabelPrintSettings.length > 0">
                 <thead class="os-table-head">
                   <tr class="row">

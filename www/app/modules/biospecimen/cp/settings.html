@@ -1,14 +1,14 @@
-<div class="form-group clearfix">
-  <form name="settingsForm" class="form-horizontal">
-    <label class="control-label col-xs-3">
-      <span translate="cp.edit_settings">Edit Settings For: </span>
+<form name="settingsForm" class="form-horizontal os-md-form">
+  <div class="form-group col-xs-10">
+    <label class="control-label col-xs-2">
+      <span class="pull-left" translate="cp.edit_settings">Show settings for</span>
     </label>
-    <div class="col-xs-6">
-      <os-select name="setting" ng-model="ctx.setting" list="settings" class="form-control" required
+    <div class="col-xs-3 input">
+      <os-select os-md-input name="setting" ng-model="ctx.setting" list="settings" class="form-control" required
         display-prop="caption" on-select="onSettingSelect(ctx.setting)">
       </os-select>
     </div>
-  </form>
-</div>
+  </div>
+</form>
 
 <div ui-view></div>
