@@ -16,6 +16,8 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import com.krishagni.catissueplus.core.administrative.domain.factory.StorageContainerErrorCode;
+import com.krishagni.catissueplus.core.administrative.repository.ContainerRestrictionsCriteria;
+import com.krishagni.catissueplus.core.administrative.repository.StorageContainerDao;
 import com.krishagni.catissueplus.core.biospecimen.domain.BaseEntity;
 import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocol;
 import com.krishagni.catissueplus.core.biospecimen.domain.Specimen;
@@ -584,22 +586,35 @@ public class StorageContainer extends BaseEntity {
 	
 	
 	public void validateRestrictions() {
-		StorageContainer parent = getParentContainer();		
+		StorageContainer parent = getParentContainer();
 		if (parent != null && !parent.canContain(this)) {
 			throw OpenSpecimenException.userError(StorageContainerErrorCode.CANNOT_HOLD_CONTAINER, parent.getName(), getName());
 		}
-		
-		for (StorageContainerPosition pos : getOccupiedPositions()) {
-			if (pos.getOccupyingContainer() != null) {
-				pos.getOccupyingContainer().validateRestrictions();
-			} else if (pos.getOccupyingSpecimen() != null) {
-				if (!canContain(pos.getOccupyingSpecimen())) {
-					throw OpenSpecimenException.userError(
-							StorageContainerErrorCode.CANNOT_HOLD_SPECIMEN, 
-							getName(), 
-							pos.getOccupyingSpecimen().getLabelOrDesc());
-				}
-			}
+
+		ContainerRestrictionsCriteria crit = new ContainerRestrictionsCriteria()
+			.containerId(getId())
+			.specimenClasses(getCompAllowedSpecimenClasses())
+			.specimenTypes(getCompAllowedSpecimenTypes())
+			.collectionProtocols(getCompAllowedCps())
+			.site(getSite());
+
+		StorageContainerDao containerDao = getDaoFactory().getStorageContainerDao();
+		List<String> nonCompliantContainers = containerDao.getNonCompliantContainers(crit);
+		if (CollectionUtils.isNotEmpty(nonCompliantContainers)) {
+			// Show first non compliant container in error message
+			throw OpenSpecimenException.userError(
+				StorageContainerErrorCode.CANNOT_HOLD_CONTAINER,
+				getName(),
+				nonCompliantContainers.get(0));
+		}
+
+		List<String> nonCompliantSpecimens = containerDao.getNonCompliantSpecimens(crit);
+		if (CollectionUtils.isNotEmpty(nonCompliantSpecimens)) {
+			// Show first non compliant specimen in error message
+			throw OpenSpecimenException.userError(
+				StorageContainerErrorCode.CANNOT_HOLD_SPECIMEN,
+				getName(),
+				nonCompliantSpecimens.get(0));
 		}
 	}
 	
@@ -637,12 +652,12 @@ public class StorageContainer extends BaseEntity {
 
 	public List<DependentEntityDetail> getDependentEntities() {
 		return DependentEntityDetail.singletonList(
-				Specimen.getEntityName(), getSpecimenCount());
+				Specimen.getEntityName(), getSpecimensCount());
 	}
 	
 	public void delete() {
-		int specimenCnt = getSpecimenCount();
-		if (specimenCnt > 0) {
+		int specimensCnt = getSpecimensCount();
+		if (specimensCnt > 0) {
 			throw OpenSpecimenException.userError(StorageContainerErrorCode.REF_ENTITY_FOUND);
 		}
 		
@@ -750,18 +765,9 @@ public class StorageContainer extends BaseEntity {
 			setPosition(null);
 		}
 	}
-	
-	private int getSpecimenCount() {
-		int specimenCnt = 0;
-		for (StorageContainer descendant: descendentContainers) {
-			specimenCnt += descendant.getSelfSpecimenCount();
-		}
-		
-		return specimenCnt;
-	}
-	
-	private int getSelfSpecimenCount() {
-		return getOccupiedPositions().size() - getChildContainers().size();
+
+	private int getSpecimensCount() {
+		return getDaoFactory().getStorageContainerDao().getSpecimensCount(getId());
 	}
 	
 	private Set<String> computeAllAllowedSpecimenTypes() {

@@ -3,6 +3,7 @@
     "navigate_to": "Navigate To",
     "home": "Home",
     "collection_protocols": "Collection Protocols",
+    "rde": "Specimen Collection",
     "settings": "Settings",
     "users": "Users",
     "institutes": "Institutes",
@@ -19,6 +20,7 @@
     "training": "Training",
 
     "cp_desc": "Create, update SOP of visits and specimens",
+    "rde_desc": "Rapidly capture patients, visits and specimens data",
     "dp_desc": "Create, update procedures for distributing specimens",
     "institutes_desc": "Update information about institutions",
     "users_desc": "Add, rename and manage users",
@@ -97,7 +99,9 @@
       "add_another": "Add Another",
       "download": "Download",
       "reset_password": "Reset Password",
-      "print": "Print"
+      "print": "Print",
+      "skip": "Skip",
+      "back": "Back"
     }
   },
 
@@ -325,6 +329,8 @@
     "bulk_import_master_specimens": "Bulk Import Master Specimens",
     "part_updates": "Participant Updates",
     "part_extensions": "Participant Forms",
+    "consents": "Consents",
+    "bulk_import_consents": "Bulk Import Consents",
     "registrations": "Participant Registrations",
     "master_specimens": "Master Specimens",
     "registered_cps": "Registered Protocols",
@@ -950,8 +956,8 @@
     "child_containers": "Child Containers",
     "free_locations": "Free Locations",
     "no_container_selected": "Please select a container",
-    "cannot_hold_specimen": "Selected container cannot hold specimen for which position is being selected",
-    "stores_specimens": "Stores Specimens",
+    "cannot_hold_specimen": "Selected container cannot hold specimen for which the position is selected",
+    "stores_specimens": "Will Store Specimens?",
     "confirm_delete": "{{entityType}} {{entityName}} and its child containers will be deleted forever. Are you sure you want to proceed?",
     "assign_positions": "Assign Positions",
     "vacate_positions": "Vacate existing specimens",
@@ -976,8 +982,9 @@
     "bulk_import": "Import Containers",
     "bulk_import_jobs": "Import Containers Jobs List",
 
-    "creating_hierarchy": "Creating Hierarchy",
+    "creating_hierarchy": "Create Hierarchy?",
     "num_of_containers": "Number of Containers",
+    "hierarchy_created_successfully": "Container hierarchy of type {{typeName}} created successfully.",
 
     "tooltip": {
       "view_details": "Click to view Container details",
@@ -1379,12 +1386,14 @@
       "storageContainer": "Storage Containers",
       "cpr": "Collection Protocol Registrations",
       "participant": "Participants",
+      "consent": "Consents",
       "visit": "Visits",
       "specimen": "Specimens",
       "specimenAliquot": "Specimen Aliquots",
       "specimenDerivative": "Derived Specimens",
       "masterSpecimen": "Master Specimens",
-      "shipment": "Shipment"
+      "shipment": "Shipment",
+      "distributionOrder": "Distribution Order"
     },
 
     "import_types": {
@@ -1473,6 +1482,8 @@
     "report_gen_initiated": "Generating distribution order report...",
     "downloading_report": "Downloading distribution order report...",
     "report_will_be_emailed": "Generating distribution order report is taking more time than anticipated. Link to download report will be sent to you by email",
+    "bulk_import": "Bulk Import Distribution Orders",
+    "bulk_import_jobs": "Import Distribution Orders Job List",
 
     "filters": "Filters",
 
@@ -1481,6 +1492,7 @@
     "paste_return_specimen_labels": "Paste or scan labels of specimens to be returned",
     "specimens_returned": "{{count}} specimens returned successfully",
     "return_qty": "Return Quantity",
+    "freeze_thaw_on_return": "Freeze/Thaw",
     "user": "User",
     "comments": "Comments",
    

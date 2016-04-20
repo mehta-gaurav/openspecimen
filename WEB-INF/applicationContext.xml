@@ -226,6 +226,7 @@
       <list>
         <bean class="com.krishagni.catissueplus.core.biospecimen.label.cpr.CpUniqueIdPpidToken"/>
         <bean class="com.krishagni.catissueplus.core.biospecimen.label.cpr.CpCodePpidToken"/>
+        <bean class="com.krishagni.catissueplus.core.biospecimen.label.cpr.CpSiteCodePpidToken"/>
         <bean class="com.krishagni.catissueplus.core.biospecimen.label.cpr.SiteCodePpidToken"/>
       </list>
     </property>
@@ -391,6 +392,7 @@
         <bean class="com.krishagni.catissueplus.core.administrative.label.container.ParentContainerAlphabetSeqLabelToken"/>
         <bean class="com.krishagni.catissueplus.core.administrative.label.container.ParentContainerNameLabelToken"/>
         <bean class="com.krishagni.catissueplus.core.administrative.label.container.ParentContainerUniqueIdLabelToken"/>
+        <bean class="com.krishagni.catissueplus.core.administrative.label.container.SiteCodeLabelToken"/>
         <bean class="com.krishagni.catissueplus.core.administrative.label.container.SiteUniqueIdLabelToken"/>
       </list>
     </property>
@@ -434,6 +436,7 @@
     <property name="daoFactory" ref="biospecimenDaoFactory"/>
     <property name="distributionProtocolFactory" ref="distributionProtocolFactory" />
     <property name="dprFactory" ref="dpRequirementFactory"/>
+    <property name="formDao" ref="formDao"/>
   </bean>
 	
   <bean id="distributionFactory" class="com.krishagni.catissueplus.core.administrative.domain.factory.impl.DistributionOrderFactoryImpl">
@@ -480,6 +483,7 @@
     <property name="basenames">
       <list>
         <value>classpath*:errors/messages*</value>
+        <value>classpath:com/krishagni/openspecimen/**/errors/messages*</value>
       </list>
     </property>
     <property name="defaultEncoding" value="UTF-8"/>
@@ -659,11 +663,13 @@
         <value>com/krishagni/catissueplus/core/administrative/schema/user-roles.xml</value>
         <value>com/krishagni/catissueplus/core/administrative/schema/container.xml</value>
         <value>com/krishagni/catissueplus/core/administrative/schema/shipment.xml</value>
+        <value>com/krishagni/catissueplus/core/administrative/schema/distribution-order.xml</value>
         <value>com/krishagni/catissueplus/core/biospecimen/schema/cp.xml</value>
         <value>com/krishagni/catissueplus/core/biospecimen/schema/cpe.xml</value>
         <value>com/krishagni/catissueplus/core/biospecimen/schema/sr.xml</value>
         <value>com/krishagni/catissueplus/core/biospecimen/schema/cpr.xml</value>
         <value>com/krishagni/catissueplus/core/biospecimen/schema/participant.xml</value>
+        <value>com/krishagni/catissueplus/core/biospecimen/schema/consent.xml</value>
         <value>com/krishagni/catissueplus/core/biospecimen/schema/visit.xml</value>
         <value>com/krishagni/catissueplus/core/biospecimen/schema/specimen.xml</value>
         <value>com/krishagni/catissueplus/core/biospecimen/schema/specimen-derivative.xml</value>
@@ -722,6 +728,12 @@
           </bean>
         </entry>
 
+        <entry key="distributionOrder">
+          <bean class="com.krishagni.catissueplus.core.administrative.services.impl.DistributionOrderImporter">
+            <property name="orderSvc" ref="distributionOrderService"/>
+          </bean>
+        </entry>
+
         <entry key="cp">
           <bean class="com.krishagni.catissueplus.core.biospecimen.services.impl.CpImporter">
             <property name="cpSvc" ref="cpSvc"/>
@@ -750,6 +762,12 @@
           <bean class="com.krishagni.catissueplus.core.biospecimen.services.impl.ParticipantImporter">
             <property name="daoFactory" ref="biospecimenDaoFactory"/>
             <property name="participantSvc" ref="participantSvc"/>
+          </bean>
+        </entry>
+        
+        <entry key="consent">
+          <bean class="com.krishagni.catissueplus.core.biospecimen.services.impl.ConsentImporter">
+            <property name="cprSvc" ref="cprSvc"/>
           </bean>
         </entry>
 
@@ -880,5 +898,6 @@
   <context:component-scan base-package="com.krishagni.catissueplus.core"/>
   
   <import resource="migrationContext.xml"/>
+  <import resource="classpath:com/krishagni/openspecimen/**/context.xml"/>
   <import resource="classpath*:pluginContext.xml"/>
 </beans>

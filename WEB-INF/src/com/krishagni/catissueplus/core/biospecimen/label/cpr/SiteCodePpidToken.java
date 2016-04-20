@@ -1,9 +1,8 @@
 package com.krishagni.catissueplus.core.biospecimen.label.cpr;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocolRegistration;
 import com.krishagni.catissueplus.core.biospecimen.domain.ParticipantMedicalIdentifier;
@@ -16,12 +15,16 @@ public class SiteCodePpidToken extends AbstractPpidToken {
 
 	@Override
 	public String getLabel(CollectionProtocolRegistration cpr, String... args) {
-		Set<ParticipantMedicalIdentifier> pmis = new TreeSet<ParticipantMedicalIdentifier>(cpr.getParticipant().getPmis());
+		List<ParticipantMedicalIdentifier> pmis = cpr.getParticipant().getPmisOrderedById();
 		if (pmis.isEmpty()) {
 			return StringUtils.EMPTY;
 		}
-		
-		ParticipantMedicalIdentifier pmi = pmis.iterator().next();
-		return pmi.getSite().getCode();
+
+		String siteCode = pmis.iterator().next().getSite().getCode();
+		if (StringUtils.isBlank(siteCode)) {
+			return StringUtils.EMPTY;
+		}
+
+		return siteCode;
 	}
 }

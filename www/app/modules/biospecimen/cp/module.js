@@ -88,6 +88,13 @@ angular.module('os.biospecimen.cp',
                 showImportType: false,
                 importType:     'UPDATE'
               });
+            } else if (objectType == 'consent') {
+              angular.extend(importDetail, {
+                title:          'participant.bulk_import_consents',
+                showImportType: false,
+                csvType:        'MULTIPLE_ROWS_PER_OBJ',
+                importType:     'UPDATE'
+              });
             } else if (objectType == 'visit') {
               importDetail.title = 'visits.bulk_import';
             } else if (objectType == 'specimen') {
@@ -144,7 +151,7 @@ angular.module('os.biospecimen.cp',
               breadcrumbs: [{state: 'cp-list', title: 'cp.list'}],
               title: 'cp.bulk_import_biospecimen_obj_jobs',
               objectTypes: [
-                'cpr', 'participant', 'visit', 
+                'cpr', 'participant', 'consent', 'visit', 
                 'specimen', 'specimenDerivative', 'specimenAliquot',
                 'masterSpecimen', 'extensions'
               ]
