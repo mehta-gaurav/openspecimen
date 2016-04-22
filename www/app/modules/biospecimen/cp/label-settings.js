@@ -31,28 +31,7 @@ angular.module('os.biospecimen.cp.label-settings', ['os.biospecimen.models'])
       $scope.onPrePrintModeChange();
     }
     
-    $scope.editLabelSettings = function() {
-      setEditCtx();
-    }
-    
-    $scope.revertEdit = function() {
-      setViewCtx();
-    }
-    
-    $scope.saveSettings = function() {
-      delete $scope.settingCtx.cp.repositoryNames;
-      delete $scope.settingCtx.cp.extensionDetail;
-      delete $scope.settingCtx.cp.catalogSetting;
-      
-      $scope.settingCtx.cp.$saveOrUpdate().then(
-        function(savedcp) {
-          angular.extend(cp, savedcp);
-          setViewCtx();
-        }
-      );
-    };
-    
-    var processManualUserInputs = function() {
+    function processManualUserInputs() {
       $scope.userInputLabels = '';
       $translate('cp.label_format.ppid').then(
         function() {
@@ -97,7 +76,28 @@ angular.module('os.biospecimen.cp.label-settings', ['os.biospecimen.models'])
         }
       );
     }
-
+    
+    $scope.editLabelSettings = function() {
+      setEditCtx();
+    }
+    
+    $scope.revertEdit = function() {
+      setViewCtx();
+    }
+    
+    $scope.saveSettings = function() {
+      delete $scope.settingCtx.cp.repositoryNames;
+      delete $scope.settingCtx.cp.extensionDetail;
+      delete $scope.settingCtx.cp.catalogSetting;
+      
+      $scope.settingCtx.cp.$saveOrUpdate().then(
+        function(savedcp) {
+          angular.extend(cp, savedcp);
+          setViewCtx();
+        }
+      );
+    };
+    
     $scope.onPrePrintModeChange = function() {
       $scope.prePrintDisabled = !!$scope.settingCtx.cp.id && $scope.settingCtx.cp.spmnLabelPrePrintMode == 'NONE';
 
