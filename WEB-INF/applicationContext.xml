@@ -490,12 +490,23 @@
   <bean id="appCtxProvider" class="com.krishagni.catissueplus.core.common.OpenSpecimenAppCtxProvider"/>
   
   <security:authentication-manager alias="authManager">
-    <!-- Register authentication manager for SAML provider -->
-    <security:authentication-provider ref="samlAuthenticationProvider"/>
     <security:authentication-provider user-service-ref="userSvc" >
        <security:password-encoder ref="passwordEncoder"></security:password-encoder>
     </security:authentication-provider>
   </security:authentication-manager>
+  
+  <bean id="samlFilter" class="org.springframework.security.web.FilterChainProxy">
+  </bean>
+  
+  <bean class="com.krishagni.catissueplus.core.auth.SAMLBootstrap">
+    <property name="samlEnable" value="${app.is_saml_enabled}"/>
+    <property name="defaultIdp" value="${app.default_idp}"/>
+    <property name="idpMetadataURL" value="${app.idp_metadata_URL}"/>
+    <property name="spMetadataPath" value="${app.sp_metadata_path}"/>
+    <property name="keyStorePath" value="${app.key_store_path}"/>
+    <property name="keyStroreDefaultKey" value="${app.key_strore_default_key}"/>
+    <property name="keyStorePassword" value="${app.key_store_password}"/>
+  </bean>
   
   <bean id="authTokenFilter" class="com.krishagni.catissueplus.rest.filter.AuthTokenFilter">
     <property name="authService" ref="userAuthService"/>

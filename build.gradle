@@ -243,6 +243,12 @@ processResources {
         plugin_dir: props.plugin_dir,
         show_sql: show_sql,
         is_saml_enabled: props.is_saml_enabled,
+        default_idp: props.default_idp,
+        idp_metadata_URL: props.idp_metadata_URL,
+        sp_metadata_path: props.sp_metadata_path,
+        key_store_path: props.key_store_path,
+        key_strore_default_key: props.key_strore_default_key,
+        key_store_password: props.key_store_password,
         buildinfo_version : getBranch(),
         buildinfo_date : getTodayDate(),
         buildinfo_commit_revision : getCommitRevision()])
@@ -269,7 +275,6 @@ task create_war(type: War) {
   from ('./WEB-INF/') {
     include 'resources/**'
     include 'applicationContext.xml'
-    include 'securityContext.xml'
     include 'restApiContext.xml'
     include 'pluginUiContext.xml'
     include 'migrationContext.xml'

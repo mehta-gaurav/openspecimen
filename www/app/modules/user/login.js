@@ -10,12 +10,8 @@ angular.module('openspecimen')
         return $http.post(url(), loginData).then(ApiUtil.processResp);
       },
 
-      getSamlConfig: function() {
+      isSamlConfig: function() {
         return $http.get(url() + "/saml-config").then(function(result) { return result.data; });
-      },
-
-      samlLogin: function() {
-        return $http.get(url() + "/saml").then(function(result) { return result.data; });
       },
 
       logout: function() {
@@ -61,7 +57,7 @@ angular.module('openspecimen')
       }
 
       loadDomains();
-      getSamlConfig();
+      isSamlConfig();
     }
 
     function loadDomains() {
@@ -76,10 +72,12 @@ angular.module('openspecimen')
       );
     }
 
-    function getSamlConfig() {
-      AuthService.getSamlConfig().then(
-        function(result){
-          $scope.isSamlEnabled = result;
+    function isSamlConfig() {
+      AuthService.isSamlConfig().then(
+        function(isSamlEnable){
+          if (isSamlEnable) {
+            $window.location.href = "saml/login";
+          }
       });
     }
 
@@ -118,14 +116,6 @@ angular.module('openspecimen')
       if ($http.defaults.headers.common['X-OS-API-TOKEN']) {
         AuthService.logout();
       }
-    }
-
-    $scope.samlLogin = function() {
-      AuthService.samlLogin().then(
-        function(redirectUrl) {
-          $window.location.href = "saml/login?idp=" + redirectUrl;
-        }
-      );
     }
 
     init();
