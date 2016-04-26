@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import com.krishagni.catissueplus.core.administrative.domain.User;
 import com.krishagni.catissueplus.core.audit.domain.UserApiCallLog;
 import com.krishagni.catissueplus.core.audit.services.AuditService;
 import com.krishagni.catissueplus.core.auth.AuthConfig;
+import com.krishagni.catissueplus.core.auth.domain.AuthDomain;
 import com.krishagni.catissueplus.core.auth.domain.AuthErrorCode;
 import com.krishagni.catissueplus.core.auth.domain.AuthToken;
 import com.krishagni.catissueplus.core.auth.domain.LoginAuditLog;
@@ -30,15 +32,18 @@ import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
 import com.krishagni.catissueplus.core.common.events.UserSummary;
+import com.krishagni.catissueplus.core.common.service.ConfigChangeListener;
+import com.krishagni.catissueplus.core.common.service.ConfigurationService;
 import com.krishagni.catissueplus.core.common.util.AuthUtil;
+import com.krishagni.catissueplus.core.common.util.ConfigUtil;
 import com.krishagni.catissueplus.core.common.util.Status;
 
-public class UserAuthenticationServiceImpl implements UserAuthenticationService {
+public class UserAuthenticationServiceImpl implements UserAuthenticationService, ConfigChangeListener, InitializingBean {
 	private DaoFactory daoFactory;
 	
 	private AuditService auditService;
 	
-	private Boolean isSamlEnabled;
+	private ConfigurationService cfgSvc;
 	
 	public void setDaoFactory(DaoFactory daoFactory) {
 		this.daoFactory = daoFactory;
@@ -48,8 +53,18 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 		this.auditService = auditService;
 	}
 	
-	public void setIsSamlEnabled(Boolean isSamlEnabled) {
-		this.isSamlEnabled = isSamlEnabled;
+	public void setCfgSvc(ConfigurationService cfgSvc) {
+		this.cfgSvc = cfgSvc;
+	}
+
+	@Override
+	public void onConfigChange(String name, String value) {
+		enableSaml();
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		cfgSvc.registerChangeListener("common", this);
 	}
 
 	@Override
@@ -163,8 +178,15 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 	}
 	
 	@Override
-	public Boolean isSamlConfigured() {
-		return isSamlEnabled;
+	@PlusTransactional
+	public ResponseEvent<Boolean> enableSaml() {
+		boolean isSamlEnable = cfgSvc.getBoolSetting("common", "is_saml_enable", false);
+		AuthDomain domain = isSamlEnable ? daoFactory.getAuthDao().getAuthDomainByName("krishagni-saml") : null;
+		if (domain != null) {
+			domain.getAuthProviderInstance();
+		}
+
+		return ResponseEvent.response(isSamlEnable);
 	}
 	
 	public String generateToken(User user, LoginDetail loginDetail) {

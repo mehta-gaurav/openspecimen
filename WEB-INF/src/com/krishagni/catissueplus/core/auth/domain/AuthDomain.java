@@ -60,6 +60,8 @@ public class AuthDomain {
 		for (String name: oldNames) {
 			oldProps.remove(name);
 		}
+
+		authProviderMap.remove(domain.getAuthProvider().getAuthType());
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

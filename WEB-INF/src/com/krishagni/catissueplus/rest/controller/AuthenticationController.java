@@ -74,6 +74,6 @@ public class AuthenticationController {
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
 	public Boolean isSamlConfigured () {
-		return userAuthService.isSamlConfigured();
+		return userAuthService.enableSaml().getPayload();
 	}
 }

@@ -31,7 +31,6 @@ project.ext["database_name"]             = props.database_name
 project.ext["database_username"]         = props.database_username
 project.ext["database_password"]         = props.database_password
 project.ext["show_sql"]                  = props.show_sql
-project.ext["is_saml_enabled"]           = props.is_saml_enabled
 project.ext["datasource_mysql_dialect"]  = "org.hibernate.dialect.MySQLDialect"
 project.ext["datasource_oracle_dialect"] = "org.hibernate.dialect.Oracle10gDialect"
 project.ext["mysql_driver"]              = "com.mysql.jdbc.Driver"
@@ -242,13 +241,6 @@ processResources {
         app_data_dir: props.app_data_dir,
         plugin_dir: props.plugin_dir,
         show_sql: show_sql,
-        is_saml_enabled: props.is_saml_enabled,
-        default_idp: props.default_idp,
-        idp_metadata_URL: props.idp_metadata_URL,
-        sp_metadata_path: props.sp_metadata_path,
-        key_store_path: props.key_store_path,
-        key_strore_default_key: props.key_strore_default_key,
-        key_store_password: props.key_store_password,
         buildinfo_version : getBranch(),
         buildinfo_date : getTodayDate(),
         buildinfo_commit_revision : getCommitRevision()])

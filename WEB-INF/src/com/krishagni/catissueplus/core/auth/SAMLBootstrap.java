@@ -27,9 +27,8 @@ import org.opensaml.xml.parse.StaticBasicParserPool;
 import org.opensaml.xml.parse.XMLParserException;
 import org.opensaml.xml.security.keyinfo.NamedKeyInfoGeneratorManager;
 import org.opensaml.xml.security.x509.X509KeyInfoGeneratorFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.access.BootstrapException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -67,16 +66,15 @@ import org.springframework.security.saml.websso.WebSSOProfileConsumerImpl;
 import org.springframework.security.saml.websso.WebSSOProfileECPImpl;
 import org.springframework.security.saml.websso.WebSSOProfileImpl;
 import org.springframework.security.saml.websso.WebSSOProfileOptions;
-import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import com.krishagni.catissueplus.core.auth.services.impl.UserAuthenticationServiceImpl;
+import com.krishagni.catissueplus.rest.filter.SamlFilter;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 
-public class SAMLBootstrap implements InitializingBean {
+@Configurable
+public class SAMLBootstrap {
 
 	@Autowired
 	private SAMLUserDetailsService userSvc;
@@ -88,21 +86,9 @@ public class SAMLBootstrap implements InitializingBean {
 	private AuthenticationManager authManager;
 
 	@Autowired
-	private FilterChainProxy samlFilter;
+	private SamlFilter samlFilter;
 
-	private boolean samlEnable;
-
-	private String defaultIdp;
-
-	private String idpMetadataURL;
-
-	private String spMetadataPath;
-
-	private String keyStorePath;
-
-	private String keyStroreDefaultKey;
-
-	private String keyStorePassword;
+	private Map<String, String> samlProps;
 
 	private VelocityEngine velocityEngine;
 
@@ -142,78 +128,22 @@ public class SAMLBootstrap implements InitializingBean {
 
 	//private MetadataGeneratorFilter metadataGeneratorFilter;
 
-	public boolean isSamlEnable() {
-		return samlEnable;
+	public SAMLBootstrap(Map<String, String> props) {
+		samlProps = props;
 	}
 
-	public void setSamlEnable(boolean samlEnable) {
-		this.samlEnable = samlEnable;
-	}
-
-	public String getDefaultIdp() {
-		return defaultIdp;
-	}
-
-	public void setDefaultIdp(String defaultIdp) {
-		this.defaultIdp = defaultIdp;
-	}
-
-	public String getIdpMetadataURL() {
-		return idpMetadataURL;
-	}
-
-	public void setIdpMetadataURL(String idpMetadataURL) {
-		this.idpMetadataURL = idpMetadataURL;
-	}
-
-	public String getSpMetadataPath() {
-		return spMetadataPath;
-	}
-
-	public void setSpMetadataPath(String spMetadataPath) {
-		this.spMetadataPath = spMetadataPath;
-	}
-
-	public String getKeyStorePath() {
-		return keyStorePath;
-	}
-
-	public void setKeyStorePath(String keyStorePath) {
-		this.keyStorePath = keyStorePath;
-	}
-
-	public String getKeyStroreDefaultKey() {
-		return keyStroreDefaultKey;
-	}
-
-	public void setKeyStroreDefaultKey(String keyStroreDefaultKey) {
-		this.keyStroreDefaultKey = keyStroreDefaultKey;
-	}
-
-	public String getKeyStorePassword() {
-		return keyStorePassword;
-	}
-
-	public void setKeyStorePassword(String keyStorePassword) {
-		this.keyStorePassword = keyStorePassword;
-	}
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		if (!samlEnable) {
-			return;
-		}
-
+	public void initialize() {
 		try {
 			PaosBootstrap.bootstrap();
 			setMetadataKeyInfoGenerator();
+			samlFilter();
+			//metadataGeneratorFilter();
+			((ProviderManager)authManager).getProviders().add(getSamlAuthenticationProvider());
 		} catch (ConfigurationException e) {
-			throw new BootstrapException("Error invoking OpenSAML bootstrap", e);
+			throw new RuntimeException("Error invoking OpenSAML bootstrap", e);
+		} catch (Exception e) {
+			throw new RuntimeException("Error initializing saml filter", e);
 		}
-
-		samlFilter();
-		//metadataGeneratorFilter();
-		((ProviderManager)authManager).getProviders().add(getSamlAuthenticationProvider());
 	}
 
 	private void setMetadataKeyInfoGenerator() {
@@ -230,15 +160,13 @@ public class SAMLBootstrap implements InitializingBean {
 	 * @return Filter chain proxy
 	 * @throws Exception
 	 */
-	@SuppressWarnings({ "unchecked", "deprecation" })
-	private FilterChainProxy samlFilter() throws Exception {
-		Map<RequestMatcher, List<Filter>> filterChainMap = new HashMap<RequestMatcher, List<Filter>>();
-		filterChainMap.put(new AntPathRequestMatcher("/saml/login/**"), Collections.singletonList(getSamlEntryPoint()));
-		filterChainMap.put(new AntPathRequestMatcher("/saml/SSO/**"), Collections.singletonList(getSamlWebSSOProcessingFilter()));
-		filterChainMap.put(new AntPathRequestMatcher("/saml/metadata/**"), Collections.singletonList(getMetadataDisplayFilter()));
+	private void samlFilter() throws Exception {
+		Map<String, Filter> filters = new HashMap<String, Filter>();
+		filters.put("/saml/login/**", getSamlEntryPoint());
+		filters.put("/saml/SSO/**", getSamlWebSSOProcessingFilter());
+		filters.put("/saml/metadata/**", getMetadataDisplayFilter());
 
-		samlFilter.setFilterChainMap(filterChainMap);
-		return samlFilter;
+		samlFilter.setFilterChain(filters);
 	}
 
 	// Entry point to initialize authentication, default values taken from
@@ -333,7 +261,7 @@ public class SAMLBootstrap implements InitializingBean {
 			providers.add(getSsoCircleExtendedMetadataProvider());
 
 			metadata = new CachingMetadataManager(providers);
-			metadata.setDefaultIDP("http://idp.ssocircle.com");
+			metadata.setDefaultIDP(samlProps.get("defaultIdp"));
 			metadata.setKeyManager(getKeyManager());
 			metadata.setTLSConfigurer(getTlsProtocolConfigurer());
 			metadata.afterPropertiesSet();
@@ -411,11 +339,11 @@ public class SAMLBootstrap implements InitializingBean {
 	private KeyManager getKeyManager() {
 		if (keyManager == null) {
 			DefaultResourceLoader loader = new DefaultResourceLoader();
-			Resource storeFile = loader.getResource("classpath:" + keyStorePath);
+			Resource storeFile = loader.getResource("classpath:" + samlProps.get("keyStorePath"));
 			Map<String, String> passwords = new HashMap<String, String>();
-			passwords.put(keyStroreDefaultKey, keyStorePassword);
+			passwords.put(samlProps.get("keyStroreDefaultKey"), samlProps.get("keyStorePassword"));
 
-			keyManager = new JKSKeyManager(storeFile, keyStorePassword, passwords, keyStroreDefaultKey);
+			keyManager = new JKSKeyManager(storeFile, samlProps.get("keyStorePassword"), passwords, samlProps.get("keyStroreDefaultKey"));
 		}
 
 		return keyManager;
@@ -502,7 +430,7 @@ public class SAMLBootstrap implements InitializingBean {
 
 	@SuppressWarnings("deprecation")
 	private HTTPMetadataProvider getSsoCircleExtendedMetadataProvider() throws MetadataProviderException {
-		HTTPMetadataProvider httpMetadataProvider = new HTTPMetadataProvider(idpMetadataURL, 15000	);
+		HTTPMetadataProvider httpMetadataProvider = new HTTPMetadataProvider(samlProps.get("idpMetadataURL"), 15000);
 		httpMetadataProvider.setParserPool(getParserPool());
 
 		return httpMetadataProvider;
@@ -510,7 +438,7 @@ public class SAMLBootstrap implements InitializingBean {
 
 	private ExtendedMetadataDelegate getSpExtendedMetadataProvider() throws MetadataProviderException, ResourceException {
 		ResourceBackedMetadataProvider provider =
-				new ResourceBackedMetadataProvider(new Timer(), new ClasspathResource("/openspecimen_app_sp.xml"));
+				new ResourceBackedMetadataProvider(new Timer(), new ClasspathResource(samlProps.get("spMetadataPath")));
 		provider.setParserPool(getParserPool());
 
 		ExtendedMetadata extendedMetadata = new ExtendedMetadata();
@@ -518,8 +446,8 @@ public class SAMLBootstrap implements InitializingBean {
 		extendedMetadata.setSecurityProfile("metaiop");
 		extendedMetadata.setSslSecurityProfile("pkix");
 		extendedMetadata.setSslHostnameVerification("default");
-		extendedMetadata.setSigningKey(keyStroreDefaultKey);
-		extendedMetadata.setEncryptionKey(keyStroreDefaultKey);
+		extendedMetadata.setSigningKey(samlProps.get("keyStroreDefaultKey"));
+		extendedMetadata.setEncryptionKey(samlProps.get("keyStroreDefaultKey"));
 		extendedMetadata.setRequireArtifactResolveSigned(false);
 		extendedMetadata.setRequireLogoutRequestSigned(false);
 		extendedMetadata.setRequireLogoutResponseSigned(false);

@@ -134,4 +134,15 @@
     <validCheckSum>7:5d8ea3bbc00fce3f107fe32b9976f50d</validCheckSum>
     <customChange class="com.krishagni.catissueplus.core.upgrade.ConfigEmailPasswordUpdater"></customChange>
   </changeSet>
+
+  <changeSet author="vlonushte" id="Enabling or disabling SAML athentication">
+    <sql>
+      call add_cfg_prop(
+        'common', 'is_saml_enable',
+        'is_saml_enable', 'is_saml_enable_desc',
+        'BOOLEAN', 'false'
+      );
+    </sql>
+  </changeSet>
+  
 </databaseChangeLog>

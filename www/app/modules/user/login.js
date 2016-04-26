@@ -42,6 +42,7 @@ angular.module('openspecimen')
 
     function init() {
       $scope.loginData = {};
+      $scope.isSamlEnable = true;
       
       if ($location.search().logout) {
         $scope.logout();
@@ -75,6 +76,7 @@ angular.module('openspecimen')
     function isSamlConfig() {
       AuthService.isSamlConfig().then(
         function(isSamlEnable){
+          $scope.isSamlEnable = isSamlEnable;
           if (isSamlEnable) {
             $window.location.href = "saml/login";
           }

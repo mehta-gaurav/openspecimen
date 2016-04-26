@@ -834,7 +834,6 @@
     "sign_in": "Sign In",
     "logout":"Log Out",
     "forgot_password": "Forgot password?",
-    "saml_login": "SAML Login",
     "approve_user": "Approve User",
     "reject_user": "Reject User",
     "request_pending": "Note: {{firstName}}  {{lastName}} would like to access OpenSpecimen. Approve or Reject?",
@@ -1775,7 +1774,9 @@
         "field_separator": "Field Separator",
         "field_separator_desc": "A single character that specifies how records in delimited text file should be split into fields. For example: CSV files use comma (,) as the field separator",
         "training_url": "Training URL ",
-        "training_url_desc": "Training documentation URL"
+        "training_url_desc": "Training documentation URL",
+        "is_saml_enable": "Enable SAML authentication",
+        "is_saml_enable_desc": "Enable SAML authentication"
       },
 
       "email": {
