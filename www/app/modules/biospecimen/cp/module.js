@@ -10,9 +10,9 @@ angular.module('os.biospecimen.cp',
     'os.biospecimen.cp.events',
     'os.biospecimen.cp.specimens',
     'os.biospecimen.cp.settings',
-    'os.biospecimen.cp.label-settings',
-    'os.biospecimen.cp.catalog',
-    'os.biospecimen.cp.setting-entities'
+    'os.biospecimen.cp.settings.entities',
+    'os.biospecimen.cp.labels',
+    'os.biospecimen.cp.catalog'
   ])
 
   .config(function($stateProvider) {
@@ -247,13 +247,13 @@ angular.module('os.biospecimen.cp',
         controller: 'SettingsCtrl',
         abstract: true
       })
-      .state('cp-detail.settings.label-settings', {
+      .state('cp-detail.settings.labels', {
         url: '/label-settings',
         templateUrl: 'modules/biospecimen/cp/label-settings.html',
         parent: 'cp-detail.settings',
         controller: 'LabelSettingsCtrl'
       })
-      .state('cp-detail.settings.catalog-settings', {
+      .state('cp-detail.settings.catalog', {
         url: '/catalog-settings',
         templateUrl: 'modules/biospecimen/cp/catalog-settings.html',
         parent: 'cp-detail.settings',

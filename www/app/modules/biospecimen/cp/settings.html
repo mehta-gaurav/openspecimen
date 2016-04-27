@@ -3,7 +3,7 @@
     <label class="control-label col-xs-2">
       <span class="pull-left" translate="cp.show_settings">Show settings for</span>
     </label>
-    <div class="col-xs-3 input">
+    <div class="col-xs-5 input">
       <os-select os-md-input name="setting" ng-model="ctx.setting" list="settings" class="form-control" required
         display-prop="caption" on-select="onSettingSelect(ctx.setting)">
       </os-select>
@@ -11,4 +11,4 @@
   </div>
 </form>
 
-<div ui-view></div>
+<div class="col-xs-12" ui-view></div>

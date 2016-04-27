@@ -1,5 +1,5 @@
 
-angular.module('os.biospecimen.cp.setting-entities', [])
+angular.module('os.biospecimen.cp.settings.entities', [])
   .factory('SettingsEntityReg', function($translate) {
     var entities = [];
     var inited = false;
@@ -26,21 +26,21 @@ angular.module('os.biospecimen.cp.setting-entities', [])
 
     function addEntity(entity) {
       var exiting = undefined;
-      for (var i=0; i<entities.length; i++) {
+      for (var i = 0; i < entities.length; i++) {
         if (entities[i].name == entity.name) {
           exiting = entities[i];
           break;
         }
       }
 
-      if(!exiting) {
+      if (!exiting) {
         entities.push(entity);
       }
     }
 
     function init() {
-      addEntity({name: 'Label', state: 'cp-detail.settings.label-settings', key: 'cp.label_format.title', caption: ''});
-      addEntity({name: 'Catalog', state: 'cp-detail.settings.catalog-settings', key: 'cp.catalog.title', caption: ''});
+      addEntity({name: 'Label', state: 'cp-detail.settings.labels', key: 'cp.label_format.title', caption: ''});
+      addEntity({name: 'Catalog', state: 'cp-detail.settings.catalog', key: 'cp.catalog.title', caption: ''});
     }
 
     init();

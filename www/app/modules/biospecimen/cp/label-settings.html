@@ -1,5 +1,5 @@
 <div class="clearfix">
-  <div class="col-xs-12">
+  <div>
     <div class="panel panel-default">
       <div class="panel-heading">
         <span translate="cp.label_format.title">
@@ -163,18 +163,28 @@
           <span translate="cp.label_format.manual">User Inputs Allowed for</span>
         </label>
         <div class="col-xs-9">
-          <label class="checkbox-inline">
-            <input type="checkbox" ng-model="settingCtx.cp.manualPpidEnabled"> 
-            <span translate="cp.ppids">Participant Protocol IDs</span>
-          </label>
-          <label class="checkbox-inline">
-            <input type="checkbox" ng-model="settingCtx.cp.manualVisitNameEnabled"> 
-            <span translate="cp.visit_names">Visit Names</span>
-          </label>
-          <label class="checkbox-inline">
-            <input type="checkbox" ng-model="settingCtx.cp.manualSpecLabelEnabled"> 
-            <span translate="cp.spec_labels">Specimen Labels</span>
-          </label>
+          <div class="os-text-checkbox">
+            <div class="checkbox">
+              <os-checkbox ng-model="settingCtx.cp.manualPpidEnabled"></os-checkbox>
+            </div>
+            <div class="message os-ctrl-padding-top">
+              <span translate="cp.ppids">Participant Protocol IDs</span>
+            </div>
+
+            <div class="checkbox">
+              <os-checkbox ng-model="settingCtx.cp.manualVisitNameEnabled"></os-checkbox>
+            </div>
+            <div class="message os-ctrl-padding-top">
+              <span translate="cp.visit_names">Visit Names</span>
+            </div>
+            
+            <div class="checkbox">
+              <os-checkbox ng-model="settingCtx.cp.manualSpecLabelEnabled"></os-checkbox>
+            </div>
+            <div class="message os-ctrl-padding-top">
+              <span translate="cp.spec_labels">Specimen Labels</span>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 
-angular.module('os.biospecimen.cp.label-settings', ['os.biospecimen.models'])
+angular.module('os.biospecimen.cp.labels', ['os.biospecimen.models'])
   .controller('LabelSettingsCtrl', function($scope, $translate, cp, PvManager) {
 
     function init() {
