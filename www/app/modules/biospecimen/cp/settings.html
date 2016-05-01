@@ -1,14 +1,16 @@
-<form name="settingsForm" class="form-horizontal os-md-form">
-  <div class="form-group col-xs-10">
-    <label class="control-label col-xs-2">
-      <span class="pull-left" translate="cp.show_settings">Show settings for</span>
-    </label>
-    <div class="col-xs-5 input">
-      <os-select os-md-input name="setting" ng-model="ctx.setting" list="settings" class="form-control" required
-        display-prop="caption" on-select="onSettingSelect(ctx.setting)">
-      </os-select>
+<div class="clearfix">
+  <form name="settingsForm" class="form-horizontal os-md-form">
+    <div class="form-group col-xs-10">
+      <label class="control-label col-xs-1">
+        <span class="pull-left" translate="cp.show">Show:</span>
+      </label>
+      <div class="col-xs-5 input">
+        <os-select os-md-input name="setting" ng-model="ctx.setting" list="settings" class="form-control" required
+          display-prop="caption" on-select="onSettingSelect(ctx.setting)">
+        </os-select>
+      </div>
     </div>
-  </div>
-</form>
+  </form>
 
-<div class="col-xs-12" ui-view></div>
+  <div class="col-xs-12" ui-view></div>
+</div>

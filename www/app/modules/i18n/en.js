@@ -235,7 +235,7 @@
     "anticipated_participant_count": "Expected Registrations",
 
     "label_format": {
-      "title": "Label Format and Print",
+      "title": "Label format and print settings",
       "specimen": "Specimen",
       "visit": "Visit",
       "aliquot": "Aliquot",
@@ -245,7 +245,7 @@
     },
 
     "catalog": {
-      "title": "Catalog",
+      "title": "Catalog settings",
       "query": "Query",
       "query_desc": "Select saved query to use for Specimen Catalog"
     },
@@ -261,7 +261,7 @@
       "Aliquot": "Aliquot"
     },
     
-    "show_settings": "Show settings for"
+    "show": "Show: "
   },
 
   "participant": {

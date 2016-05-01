@@ -1,11 +1,11 @@
 
 angular.module('os.biospecimen.cp.settings', [])
-  .controller('SettingsCtrl', function($scope, $state, SettingsEntityReg) {
+  .controller('CpSettingsCtrl', function($scope, $state, CpSettingsReg) {
     function init() {
       $scope.ctx = {};
-      SettingsEntityReg.getEntities().then(function(entities) {
+      CpSettingsReg.getEntities().then(function(entities) {
         $scope.settings = entities;
-        $scope.setSelectedSetting();
+        $scope.setDefaultSettingInDropdown();
       });
     }
 
@@ -13,7 +13,7 @@ angular.module('os.biospecimen.cp.settings', [])
       $state.go(entity.state);
     }
 
-    $scope.setSelectedSetting = function() {
+    $scope.setDefaultSettingInDropdown = function() {
       angular.forEach($scope.settings, function(setting) {
         if (setting.state == $state.current.name) {
           $scope.ctx.setting = setting;

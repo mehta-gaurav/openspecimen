@@ -1,112 +1,110 @@
 <div class="clearfix">
-  <div>
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <span translate="cp.label_format.title">
-          Label Format and Print Settings
-        </span>
-        <span class="os-btns" show-if-allowed="cpResource.updateOpts">
-          <button class="default" ng-if="settingCtx.view == 'view_setting'" ng-click="editLabelSettings()">
-            <span class="fa fa-pencil"></span>
-            <span translate="common.buttons.edit">Edit</span>
-          </button>
-        </span>
+  <div class="panel panel-default" ng-switch on="settingCtx.view">
+    <div class="panel-heading">
+      <span translate="cp.label_format.title">
+        Label Format and Print Settings
+      </span>
+      <span class="os-btns" ng-switch-when = 'view_setting'" show-if-allowed="cpResource.updateOpts">
+        <button class="default" ng-click="editLabelSettings()">
+          <span class="fa fa-pencil"></span>
+          <span translate="common.buttons.edit">Edit</span>
+        </button>
+      </span>
+    </div>
+    <div class="panel-body">
+      <div ng-switch-when = 'view_setting'">
+        <div ng-include="'modules/biospecimen/cp/label-settings-overview.html'"></div>
       </div>
-      <div class="panel-body">
-        <div ng-if="settingCtx.view == 'view_setting'">
-          <div ng-include="'label-settings-overview.html'"></div>
-        </div>
-        
-        <div ng-if="settingCtx.view == 'edit_setting'">
-          <div ng-include="'label-settings-addedit.html'"></div>
-        </div>
+
+      <div ng-switch-default>
+        <div ng-include="'modules/biospecimen/cp/label-settings-addedit.html'"></div>
       </div>
     </div>
   </div>
 </div>
 
-<script type="text/ng-template" id="label-settings-overview.html">
-  <div class="os-section os-line-section col-xs-8">
+<script type="text/ng-template" id="modules/biospecimen/cp/label-settings-overview.html">
+  <div class="col-xs-8">
     <ul class="os-key-values os-one-col">
       <li class="item">
-        <span class="key key-sm" translate="cp.label_format.ppid">PPID Format</span>
+        <strong class="key key-sm" translate="cp.label_format.ppid">PPID Format</strong>
         <span class="value value-md">{{settingCtx.cp.ppidFmt | osNoValue}}</span>
       </li>
 
       <li class="item">
-        <span class="key key-sm" translate="cp.label_format.visit">Visit</span>
+        <strong class="key key-sm" translate="cp.label_format.visit">Visit</strong>
         <span class="value value-md">{{settingCtx.cp.visitNameFmt | osNoValue}}</span>
       </li>
 
       <li class="item">
-        <span class="key key-sm" translate="cp.label_format.specimen">Specimen</span>
+        <strong class="key key-sm" translate="cp.label_format.specimen">Specimen</strong>
         <span class="value value-md">{{settingCtx.cp.specimenLabelFmt | osNoValue}}</span>
-      </li>
-          
-      <li class="item">
-        <span class="key key-sm" translate="cp.label_format.aliquot">Aliquot</span>
-        <span class="value value-md">{{settingCtx.cp.aliquotLabelFmt | osNoValue}}</span>
       </li>
 
       <li class="item">
-        <span class="key key-sm" translate="cp.label_format.derivative">Derivative</span>
+        <strong class="key key-sm" translate="cp.label_format.derivative">Derivative</strong>
         <span class="value value-md">{{settingCtx.cp.derivativeLabelFmt | osNoValue}}</span>
       </li>
 
       <li class="item">
-        <span class="key key-sm" translate="cp.label_format.manual">User Inputs Allowed for</span>
+        <strong class="key key-sm" translate="cp.label_format.aliquot">Aliquot</strong>
+        <span class="value value-md">{{settingCtx.cp.aliquotLabelFmt | osNoValue}}</span>
+      </li>
+
+      <li class="item">
+        <strong class="key key-sm" translate="cp.label_format.manual">User Inputs Allowed for</strong>
         <span class="value value-md">{{userInputLabels | osNoValue}}</span>
       </li>
 
       <li class="item">
-        <span class="key key-sm" translate="cp.pre_print_spmn_labels">Pre Print Specimen Labels</span>
+        <strong class="key key-sm" translate="cp.pre_print_spmn_labels">Pre Print Specimen Labels</strong>
         <span class="value value-md">
           {{'cp.spmn_label_pre_print_modes.' + settingCtx.cp.spmnLabelPrePrintMode | translate}}
         </span>
       </li>
     </ul>
-  </div>
 
-  <div class="os-section os-line-section col-xs-8">
-    <strong class="key key-sm" translate="cp.print_settings">Print Settings</strong>
-    <span ng-if="settingCtx.cp.spmnLabelPrintSettings.length == 0" translate="common.none">None</span>
-    <table class="os-table os-table-muted-hdr os-border" ng-if="settingCtx.cp.spmnLabelPrintSettings.length > 0">
-      <thead class="os-table-head">
-        <tr class="row">
-          <td class="col os-col-40">
-            <span translate="cp.lineage">Lineage</span>
-          </td>
-          <td class="col os-col-30">
-            <span translate="cp.when_to_print">When to Print</span>
-          </td>
-          <td class="col os-col-30">
-            <span translate="cp.copies">Copies</span>
-          </td>
-        </tr>
-      </thead>
-      <tbody class="os-table-body">
-        <tr class="row" ng-form="psForm" ng-repeat="setting in settingCtx.cp.spmnLabelPrintSettings">
-          <td class="col">
-            <span>{{'cp.spmn_lineages.' + setting.lineage | translate}}</span>
-          </td>
-          <td class="col" ng-switch on="!!setting.printMode">
-            <span ng-switch-when="true">
-              {{'srs.spmn_label_auto_print_modes.' + setting.printMode | translate}}
-            </span>
-            <span ng-switch-default translate="common.not_specified">
-              Not Specified
-            </span>
-          </td>
-          <td class="col">
-            <span>{{setting.copies | osNoValue}}</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="os-section os-line-section">
+      <strong class="key key-sm" translate="cp.print_settings">Print Settings</strong>
+      <span ng-if="settingCtx.cp.spmnLabelPrintSettings.length == 0" translate="common.none">None</span>
+      <table class="os-table os-table-muted-hdr os-border" ng-if="settingCtx.cp.spmnLabelPrintSettings.length > 0">
+        <thead class="os-table-head">
+          <tr class="row">
+            <td class="col os-col-40">
+              <span translate="cp.lineage">Lineage</span>
+            </td>
+            <td class="col os-col-30">
+              <span translate="cp.when_to_print">When to Print</span>
+            </td>
+            <td class="col os-col-30">
+              <span translate="cp.copies">Copies</span>
+            </td>
+          </tr>
+        </thead>
+        <tbody class="os-table-body">
+          <tr class="row" ng-repeat="setting in settingCtx.cp.spmnLabelPrintSettings">
+            <td class="col">
+              <span>{{'cp.spmn_lineages.' + setting.lineage | translate}}</span>
+            </td>
+            <td class="col" ng-switch on="!!setting.printMode">
+              <span ng-switch-when="true">
+                {{'srs.spmn_label_auto_print_modes.' + setting.printMode | translate}}
+              </span>
+              <span ng-switch-default translate="common.not_specified">
+                Not Specified
+              </span>
+            </td>
+            <td class="col">
+              <span>{{setting.copies | osNoValue}}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </script>
 
-<script type="text/ng-template" id="label-settings-addedit.html">
+<script type="text/ng-template" id="modules/biospecimen/cp/label-settings-addedit.html">
   <form name="lsForm" os-form-validator="lsForm" class="form-horizontal" novalidate>
     <div class="form-group">
       <label class="control-label col-xs-3">
@@ -136,6 +134,16 @@
           placeholder="{{'cp.specimen_label_fmt' | translate}}">
       </div>
     </div>
+    
+    <div class="form-group">
+      <label class="control-label col-xs-3">
+        <span translate="cp.label_format.derivative">Derivative</span>
+      </label>
+      <div class="col-xs-6">
+        <input type="text" ng-model="settingCtx.cp.derivativeLabelFmt" class="form-control" 
+          placeholder="{{'cp.derivative_label_fmt' | translate}}">
+      </div>
+    </div>
 
     <div class="form-group">
       <label class="control-label col-xs-3">
@@ -149,39 +157,29 @@
 
     <div class="form-group">
       <label class="control-label col-xs-3">
-        <span translate="cp.label_format.derivative">Derivative</span>
-      </label>
-      <div class="col-xs-6">
-        <input type="text" ng-model="settingCtx.cp.derivativeLabelFmt" class="form-control" 
-          placeholder="{{'cp.derivative_label_fmt' | translate}}">
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="control-label col-xs-3">
         <span translate="cp.label_format.manual">User Inputs Allowed for</span>
       </label>
       <div class="col-xs-9">
         <div class="os-text-checkbox">
-          <div class="checkbox">
-            <os-checkbox ng-model="settingCtx.cp.manualPpidEnabled"></os-checkbox>
-          </div>
-          <div class="message os-ctrl-padding-top">
-            <span translate="cp.ppids">Participant Protocol IDs</span>
-          </div>
-
-          <div class="checkbox">
-            <os-checkbox ng-model="settingCtx.cp.manualVisitNameEnabled"></os-checkbox>
-          </div>
-          <div class="message os-ctrl-padding-top">
-            <span translate="cp.visit_names">Visit Names</span>
+          <div>
+            <div class="checkbox">
+              <os-checkbox ng-model="settingCtx.cp.manualPpidEnabled"></os-checkbox>
+            </div>
+            <span class="message os-ctrl-padding-top" translate="cp.ppids">Participant Protocol IDs</span>
           </div>
 
-          <div class="checkbox">
-            <os-checkbox ng-model="settingCtx.cp.manualSpecLabelEnabled"></os-checkbox>
+          <div>
+            <div class="checkbox">
+              <os-checkbox ng-model="settingCtx.cp.manualVisitNameEnabled"></os-checkbox>
+            </div>
+            <span class="message os-ctrl-padding-top" translate="cp.visit_names">Visit Names</span>
           </div>
-          <div class="message os-ctrl-padding-top">
-            <span translate="cp.spec_labels">Specimen Labels</span>
+
+          <div>
+            <div class="checkbox">
+              <os-checkbox ng-model="settingCtx.cp.manualSpecLabelEnabled"></os-checkbox>
+            </div>
+            <span class="message os-ctrl-padding-top" translate="cp.spec_labels">Specimen Labels</span>
           </div>
         </div>
       </div>

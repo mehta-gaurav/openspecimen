@@ -12,7 +12,7 @@ angular.module('os.biospecimen.cp.detail', ['os.biospecimen.models'])
       angular.extend($scope.cpResource.updateOpts, opts);
       angular.extend($scope.cpResource.deleteOpts, opts);
     }
-    
+
     $scope.editCp = function(property, value) {
       var d = $q.defer();
       d.resolve({});
