@@ -15,7 +15,7 @@ angular.module('os.biospecimen.cp.labels', ['os.biospecimen.models'])
       }
       
       // This will set label & print setting as default value in drop down while clicking on settings tab.
-      // Function defination is in cp-settings.js (parent controller).
+      // Function defination is in settings.js (parent controller).
       $scope.setDefaultSettingInDropdown();
       setViewCtx();
     };
