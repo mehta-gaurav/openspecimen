@@ -262,7 +262,6 @@
   <bean id="userAuthService" class="com.krishagni.catissueplus.core.auth.services.impl.UserAuthenticationServiceImpl">
     <property name="daoFactory" ref="biospecimenDaoFactory"/>
     <property name="auditService" ref="auditService"/>
-    <property name="cfgSvc" ref="cfgSvc"/>
   </bean>
 
   <bean id="specimenSvc" class="com.krishagni.catissueplus.core.biospecimen.services.impl.SpecimenServiceImpl">
@@ -495,7 +494,10 @@
     </security:authentication-provider>
   </security:authentication-manager>
   
-  <bean id="samlFilter" class="com.krishagni.catissueplus.rest.filter.SamlFilter"></bean>
+  <bean id="samlFilter" class="com.krishagni.catissueplus.rest.filter.SamlFilter">
+    <property name="daoFactory" ref="biospecimenDaoFactory"/>
+    <property name="authService" ref="userAuthService"/>
+  </bean>
   
   <bean id="authTokenFilter" class="com.krishagni.catissueplus.rest.filter.AuthTokenFilter">
     <property name="authService" ref="userAuthService"/>
@@ -518,7 +520,6 @@
             <value>/config-settings/app-props</value>
             <value>/config-settings/welcome-video</value>
             <value>/auth-domains/</value>
-            <value>/saml-config</value>
           </list>
         </entry>
       </map>

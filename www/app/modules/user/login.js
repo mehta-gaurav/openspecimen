@@ -10,10 +10,6 @@ angular.module('openspecimen')
         return $http.post(url(), loginData).then(ApiUtil.processResp);
       },
 
-      isSamlConfig: function() {
-        return $http.get(url() + "/saml-config").then(function(result) { return result.data; });
-      },
-
       logout: function() {
         var q = $http.delete(url());
         this.removeToken();
@@ -38,11 +34,10 @@ angular.module('openspecimen')
       }
     }
   })
-  .controller('LoginCtrl', function($scope, $rootScope, $state, $http, $window, $location, AuthDomain, AuthService) {
+  .controller('LoginCtrl', function($scope, $rootScope, $state, $http, $location, AuthDomain, AuthService) {
 
     function init() {
       $scope.loginData = {};
-      $scope.isSamlEnable = true;
       
       if ($location.search().logout) {
         $scope.logout();
@@ -58,7 +53,6 @@ angular.module('openspecimen')
       }
 
       loadDomains();
-      isSamlConfig();
     }
 
     function loadDomains() {
@@ -71,16 +65,6 @@ angular.module('openspecimen')
           }
         }
       );
-    }
-
-    function isSamlConfig() {
-      AuthService.isSamlConfig().then(
-        function(isSamlEnable){
-          $scope.isSamlEnable = isSamlEnable;
-          if (isSamlEnable) {
-            $window.location.href = "saml/login";
-          }
-      });
     }
 
     function onLogin(result) {

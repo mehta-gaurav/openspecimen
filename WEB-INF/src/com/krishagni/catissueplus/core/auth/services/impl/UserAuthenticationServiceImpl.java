@@ -38,12 +38,10 @@ import com.krishagni.catissueplus.core.common.util.AuthUtil;
 import com.krishagni.catissueplus.core.common.util.ConfigUtil;
 import com.krishagni.catissueplus.core.common.util.Status;
 
-public class UserAuthenticationServiceImpl implements UserAuthenticationService, ConfigChangeListener, InitializingBean {
+public class UserAuthenticationServiceImpl implements UserAuthenticationService {
 	private DaoFactory daoFactory;
 	
 	private AuditService auditService;
-	
-	private ConfigurationService cfgSvc;
 	
 	public void setDaoFactory(DaoFactory daoFactory) {
 		this.daoFactory = daoFactory;
@@ -51,20 +49,6 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService,
 	
 	public void setAuditService(AuditService auditService) {
 		this.auditService = auditService;
-	}
-	
-	public void setCfgSvc(ConfigurationService cfgSvc) {
-		this.cfgSvc = cfgSvc;
-	}
-
-	@Override
-	public void onConfigChange(String name, String value) {
-		enableSaml();
-	}
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		cfgSvc.registerChangeListener("common", this);
 	}
 
 	@Override
@@ -177,35 +161,23 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService,
 		daoFactory.getAuthDao().deleteInactiveAuthTokens(cal.getTime());
 	}
 	
-	@Override
-	@PlusTransactional
-	public ResponseEvent<Boolean> enableSaml() {
-		boolean isSamlEnable = cfgSvc.getBoolSetting("common", "is_saml_enable", false);
-		AuthDomain domain = isSamlEnable ? daoFactory.getAuthDao().getAuthDomainByName("krishagni-saml") : null;
-		if (domain != null) {
-			domain.getAuthProviderInstance();
-		}
-
-		return ResponseEvent.response(isSamlEnable);
-	}
-	
 	public String generateToken(User user, LoginDetail loginDetail) {
 		LoginAuditLog loginAuditLog = insertLoginAudit(user, loginDetail.getIpAddress(), true);
-		String token = null;
-		if (!loginDetail.isDoNotGenerateToken()) {
-			token = UUID.randomUUID().toString();
-			
-			AuthToken authToken = new AuthToken();
-			authToken.setIpAddress(loginDetail.getIpAddress());
-			authToken.setToken(token);
-			authToken.setUser(user);
-			authToken.setLoginAuditLog(loginAuditLog);
-			daoFactory.getAuthDao().saveAuthToken(authToken);
-			
-			insertApiCallLog(loginDetail, user, token);
+
+		if (loginDetail.isDoNotGenerateToken()) {
+			return null;
 		}
-		
-		return token == null ? null : AuthUtil.encodeToken(token);
+
+		String token = UUID.randomUUID().toString();
+		AuthToken authToken = new AuthToken();
+		authToken.setIpAddress(loginDetail.getIpAddress());
+		authToken.setToken(token);
+		authToken.setUser(user);
+		authToken.setLoginAuditLog(loginAuditLog);
+		daoFactory.getAuthDao().saveAuthToken(authToken);
+
+		insertApiCallLog(loginDetail, user, token);
+		return AuthUtil.encodeToken(token);
 	}
 	
 	private LoginAuditLog insertLoginAudit(User user, String ipAddress, boolean loginSuccessful) {

@@ -1,4 +1,5 @@
 
+
 package com.krishagni.catissueplus.core.auth.repository.impl;
 
 import java.util.Date;
@@ -33,6 +34,17 @@ public class AuthDaoImpl extends AbstractDao<AuthDomain> implements AuthDao {
 		return result.isEmpty() ? null : result.get(0);
 	}
 	
+	@SuppressWarnings(value = {"unchecked"})
+	@Override
+	public AuthDomain getAuthDomainByAuthType(String authType) {
+		List<AuthDomain> result = sessionFactory.getCurrentSession()
+				.getNamedQuery(GET_DOMAIN_BY_AUTH_TYPE)
+				.setString("authType", authType)
+				.list();
+
+		return result.isEmpty() ? null : result.get(0);
+	}
+
 	@SuppressWarnings(value = {"unchecked"})
 	@Override
 	public Boolean isUniqueAuthDomainName(String domainName) {
@@ -104,6 +116,8 @@ public class AuthDaoImpl extends AbstractDao<AuthDomain> implements AuthDao {
 	private static final String GET_AUTH_DOMAINS = FQN + ".getAuthDomains";
 
 	private static final String GET_DOMAIN_BY_NAME = FQN + ".getDomainByName";
+
+	private static final String GET_DOMAIN_BY_AUTH_TYPE = FQN + ".getDomainByAuthType";
 
 	private static final String GET_PROVIDER_BY_TYPE = AuthProvider.class.getName() + ".getProviderByType";
 	

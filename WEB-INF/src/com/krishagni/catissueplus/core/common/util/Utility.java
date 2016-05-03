@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.FileNameMap;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Calendar;
@@ -21,6 +22,7 @@ import java.util.Set;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
@@ -315,4 +317,35 @@ public class Utility {
 			throw new RuntimeException(e);
 		}
 	}
+
+	public static String getAuthTokenFromCookie(HttpServletRequest httpReq) {
+		String cookieHdr = httpReq.getHeader("Cookie");
+		if (StringUtils.isBlank(cookieHdr)) {
+			return null;
+		}
+
+		String[] cookies = cookieHdr.split(";");
+		String authToken = null;
+		for (String cookie : cookies) {
+			if (!cookie.trim().startsWith("osAuthToken")) {
+				continue;
+			}
+
+			String[] authTokenParts = cookie.trim().split("=");
+			if (authTokenParts.length == 2) {
+				try {
+					authToken = URLDecoder.decode(authTokenParts[1], "utf-8");
+					if (authToken.startsWith("%")) {
+						authToken = authToken.substring(1, authToken.length() - 1);
+					}
+				} catch (Exception e) {
+
+				}
+				break;
+			}
+		}
+
+		return authToken;
+	}
+
 }

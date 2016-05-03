@@ -33,6 +33,7 @@ import com.krishagni.catissueplus.core.auth.services.UserAuthenticationService;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
 import com.krishagni.catissueplus.core.common.util.AuthUtil;
+import com.krishagni.catissueplus.core.common.util.Utility;
 
 public class AuthTokenFilter extends GenericFilterBean {
 	private static final String OS_AUTH_TOKEN_HDR = "X-OS-API-TOKEN";
@@ -116,7 +117,7 @@ public class AuthTokenFilter extends GenericFilterBean {
 		User userDetails = null;
 		String authToken = httpReq.getHeader(OS_AUTH_TOKEN_HDR);
 		if (authToken == null) {
-			authToken = getAuthTokenFromCookie(httpReq);
+			authToken = Utility.getAuthTokenFromCookie(httpReq);
 		}
 		
 		if (authToken != null) {
@@ -197,36 +198,6 @@ public class AuthTokenFilter extends GenericFilterBean {
 	private void setUnauthorizedResp(HttpServletResponse httpResp) throws IOException {
 		httpResp.sendError(HttpServletResponse.SC_UNAUTHORIZED,
 				"You must supply valid credentials to access the OpenSpecimen REST API");
-	}
-	
-	private String getAuthTokenFromCookie(HttpServletRequest httpReq) {
-		String cookieHdr = httpReq.getHeader("Cookie");
-		if (StringUtils.isBlank(cookieHdr)) {
-			return null;
-		}
-		
-		String[] cookies = cookieHdr.split(";");
-		String authToken = null;
-		for (String cookie : cookies) {
-			if (!cookie.trim().startsWith("osAuthToken")) {
-				continue;
-			}
-			
-			String[] authTokenParts = cookie.trim().split("=");
-			if (authTokenParts.length == 2) {
-				try {
-					authToken = URLDecoder.decode(authTokenParts[1], "utf-8");
-					if (authToken.startsWith("%")) {
-						authToken = authToken.substring(1, authToken.length() - 1);
-					}
-				} catch (Exception e) {
-					
-				}				
-				break;
-			}
-		}
-		
-		return authToken;
 	}
 
 	private boolean matches(HttpServletRequest httpReq, String url) {

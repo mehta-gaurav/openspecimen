@@ -69,11 +69,4 @@ public class AuthenticationController {
 
 		return Collections.singletonMap("Status", resp.getPayload());
 	}
-	
-	@RequestMapping(method = RequestMethod.GET,  value = "/saml-config")
-	@ResponseStatus(HttpStatus.OK)
-	@ResponseBody
-	public Boolean isSamlConfigured () {
-		return userAuthService.enableSaml().getPayload();
-	}
 }

@@ -61,6 +61,10 @@ public class AuthDomain {
 			oldProps.remove(name);
 		}
 
+		/*
+		 * Removing updated domain authProvider from map, 
+		 * so that it will create new instance of authProvider with updated properties
+		 */
 		authProviderMap.remove(domain.getAuthProvider().getAuthType());
 	}
 

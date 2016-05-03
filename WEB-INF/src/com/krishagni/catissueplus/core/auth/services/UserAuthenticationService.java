@@ -17,6 +17,4 @@ public interface UserAuthenticationService {
 	public ResponseEvent<UserSummary> getCurrentLoggedInUser();
 	
 	public ResponseEvent<String> removeToken(RequestEvent<String> req);
-	
-	public ResponseEvent<Boolean> enableSaml();
 }

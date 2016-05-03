@@ -21,6 +21,7 @@ import com.krishagni.catissueplus.core.administrative.events.UserDetail;
 import com.krishagni.catissueplus.core.administrative.repository.UserDao;
 import com.krishagni.catissueplus.core.administrative.repository.UserListCriteria;
 import com.krishagni.catissueplus.core.administrative.services.UserService;
+import com.krishagni.catissueplus.core.auth.domain.AuthDomain;
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.PlusTransactional;
 import com.krishagni.catissueplus.core.common.access.AccessCtrlMgr;
@@ -97,8 +98,20 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@PlusTransactional
 	public Object loadUserBySAML(SAMLCredential credential) throws UsernameNotFoundException {
-		String email = credential.getAttributeAsString("EmailAddress");
-		User user = daoFactory.getUserDao().getUserByEmailAddress(email);
+		AuthDomain domain = daoFactory.getAuthDao().getAuthDomainByAuthType("saml");
+		Map<String, String> props = domain.getAuthProvider().getProps();
+		String loginNameAttr = props.get("loginNameAttr");
+		String emailAttr = props.get("emailAddressAttr");
+		
+		User user = null;
+		if (StringUtils.isNotBlank(loginNameAttr)) {
+			String loginName = credential.getAttributeAsString(loginNameAttr);
+			user = daoFactory.getUserDao().getUser(loginName, domain.getName());
+		} else if (StringUtils.isNotBlank(emailAttr)) {
+			String email = credential.getAttributeAsString(emailAttr);
+			user = daoFactory.getUserDao().getUserByEmailAddress(email);
+		}
+		
 		if (user == null) {
 			throw new UsernameNotFoundException("User not found");
 		}

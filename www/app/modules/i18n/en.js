@@ -1698,7 +1698,9 @@
         "token_inactive_interval": "Session Timeout Limit (minutes)",
         "token_inactive_interval_desc": "Minutes of inactiveness after which a user is automatically logged out.",
         "verify_token_ip_address": "IP Address Validation",
-        "verify_token_ip_address_desc": "Check whether requests are made from the same IP address to which the login token was issued."
+        "verify_token_ip_address_desc": "Check whether requests are made from the same IP address to which the login token was issued.",
+        "saml_enable": "Enable SAML authentication",
+        "saml_enable_desc": "Enable single sign on using SAML based identity provider"
       },
       
       "administrative": {
@@ -1774,9 +1776,7 @@
         "field_separator": "Field Separator",
         "field_separator_desc": "A single character that specifies how records in delimited text file should be split into fields. For example: CSV files use comma (,) as the field separator",
         "training_url": "Training URL ",
-        "training_url_desc": "Training documentation URL",
-        "is_saml_enable": "Enable SAML authentication",
-        "is_saml_enable_desc": "Enable SAML authentication"
+        "training_url_desc": "Training documentation URL"
       },
 
       "email": {
