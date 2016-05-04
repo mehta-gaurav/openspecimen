@@ -156,6 +156,12 @@ dependencies {
   compile group: 'org.springframework.security', name: 'spring-security-core', version:'3.2.7.RELEASE'
   compile group: 'org.springframework.security', name: 'spring-security-ldap', version:'3.2.7.RELEASE'
   compile group: 'org.springframework.security', name: 'spring-security-web', version:'3.2.7.RELEASE'
+  compile group: 'velocity', name: 'velocity-dep', version:'1.4'
+  compile group: 'com.thoughtworks.xstream', name: 'xstream', version:'1.4.8'
+  compile group: 'com.itextpdf', name: 'itextpdf', version:'5.5.6'
+  compile group: 'dom4j', name: 'dom4j', version: '1.6.1'
+
+  //SAML dependencies lib
   compile group: 'org.springframework.security.extensions', name: 'spring-security-saml2-core', version:'1.0.0.RELEASE'
   compile group: 'org.opensaml', name: 'opensaml', version: '2.6.1'
   compile group: 'org.opensaml', name: 'openws', version: '1.5.4'
@@ -168,11 +174,7 @@ dependencies {
   compile group: 'xalan', name: 'serializer', version: '2.7.2'
   compile group: 'org.bouncycastle', name: 'bcprov-jdk15', version: '1.46'
   compile group: 'joda-time', name: 'joda-time', version: '2.1'
-  compile group: 'velocity', name: 'velocity-dep', version:'1.4'
   compile group: 'org.apache.velocity', name: 'velocity', version:'1.7'
-  compile group: 'com.thoughtworks.xstream', name: 'xstream', version:'1.4.8'
-  compile group: 'com.itextpdf', name: 'itextpdf', version:'5.5.6'
-  compile group: 'dom4j', name: 'dom4j', version: '1.6.1'
   compile group: 'ca.juliusdavies', name: 'not-yet-commons-ssl', version: '0.3.9'
 
   runtime group: 'antlr', name: 'antlr', version: '2.7.7'

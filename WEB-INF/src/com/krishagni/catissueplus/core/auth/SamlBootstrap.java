@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.Configuration;
 import org.opensaml.PaosBootstrap;
@@ -75,6 +76,8 @@ import edu.emory.mathcs.backport.java.util.Collections;
 
 @Configurable
 public class SamlBootstrap {
+
+	private static final String MATADATA_GEN_URL = "/saml/";
 
 	private static final String LOGIN_URL = "/saml/login/**";
 
@@ -140,20 +143,24 @@ public class SamlBootstrap {
 		SAMLEntryPoint samlEntryPoint = getSamlEntryPoint(contextProvider, processor, metadata);
 		SAMLProcessingFilter samlWebSSOProcessingFilter = getSamlWebSSOProcessingFilter(contextProvider, processor);
 		MetadataDisplayFilter metadataDisplayFilter = getMetadataDisplayFilter(contextProvider, metadata, keyManager);
+		MetadataGenerator metadataGenerator = getMetadataGenerator(keyManager, samlEntryPoint, samlWebSSOProcessingFilter);
+		MetadataGeneratorFilter metadataGenratorFilter = getmMtadataGeneratorFilter(metadataGenerator, metadata, metadataDisplayFilter);
 
 		Map<String, Filter> filters = new HashMap<String, Filter>();
+		filters.put(MATADATA_GEN_URL, metadataGenratorFilter);
 		filters.put(LOGIN_URL, samlEntryPoint);
 		filters.put(SSO_URL, samlWebSSOProcessingFilter);
 		filters.put(METADATA_URL, metadataDisplayFilter);
 
 		samlFilter.setFilterChain(filters);
-
-		//metadataGeneratorFilter(metadata, samlEntryPoint, samlWebSSOProcessingFilter, metadataDisplayFilter);
 	}
 	
-	/*private MetadataGeneratorFilter metadataGeneratorFilter(CachingMetadataManager metadata, SAMLEntryPoint samlEntryPoint, 
-			SAMLProcessingFilter samlWebSSOProcessingFilter, MetadataDisplayFilter metadataDisplayFilter) throws Exception {
-		MetadataGeneratorFilter metadataGeneratorFilter = new MetadataGeneratorFilter(metadataGenerator(samlEntryPoint, samlWebSSOProcessingFilter));
+	/*
+	 * Create metadata for service provider on first request
+	 */
+	private MetadataGeneratorFilter getmMtadataGeneratorFilter(MetadataGenerator metadataGenerator, CachingMetadataManager metadata, 
+			MetadataDisplayFilter metadataDisplayFilter) throws Exception {
+		MetadataGeneratorFilter metadataGeneratorFilter = new MetadataGeneratorFilter(metadataGenerator);
 		metadataGeneratorFilter.setManager(metadata);
 		metadataGeneratorFilter.setDisplayFilter(metadataDisplayFilter);
 
@@ -161,18 +168,16 @@ public class SamlBootstrap {
 		return metadataGeneratorFilter;
 	}
 
-	private MetadataGenerator metadataGenerator(SAMLEntryPoint samlEntryPoint, SAMLProcessingFilter samlWebSSOProcessingFilter) throws Exception {
-		ExtendedMetadata extendedMetadata = new ExtendedMetadata();
-		extendedMetadata.setIdpDiscoveryEnabled(false);
-
+	private MetadataGenerator getMetadataGenerator(KeyManager keyManager, SAMLEntryPoint samlEntryPoint, SAMLProcessingFilter samlWebSSOProcessingFilter) throws Exception {
 		MetadataGenerator metadataGenerator = new MetadataGenerator();
-		metadataGenerator.setExtendedMetadata(extendedMetadata);
+		metadataGenerator.setEntityId(samlProps.get("entityId"));
+		metadataGenerator.setKeyManager(keyManager);
 		metadataGenerator.setSamlEntryPoint(samlEntryPoint);
 		metadataGenerator.setSamlWebSSOFilter(samlWebSSOProcessingFilter);
-		metadataGenerator.setKeyManager(getKeyManager());
+		metadataGenerator.setExtendedMetadata(getExtendedMetadata());
 
 		return metadataGenerator;
-	}*/
+	}
 
 	/*
 	 * SAML Authentication Provider responsible for validating of received SAML messages
@@ -273,8 +278,12 @@ public class SamlBootstrap {
 	 */
 	private CachingMetadataManager getMetadata(ParserPool parserPool, KeyManager keyManager) throws Exception {
 		List<MetadataProvider> providers = new ArrayList<MetadataProvider>();
-		providers.add(getSpExtendedMetadataProvider(parserPool));
 		providers.add(getIdpExtendedMetadataProvider(parserPool));
+
+		ExtendedMetadataDelegate spMetadataProvider = getSpExtendedMetadataProvider(parserPool);
+		if (spMetadataProvider != null) {
+			providers.add(spMetadataProvider);
+		}
 
 		CachingMetadataManager metadata = new CachingMetadataManager(providers);
 		metadata.setDefaultIDP(samlProps.get("defaultIdp"));
@@ -409,10 +418,18 @@ public class SamlBootstrap {
 	}
 
 	private ExtendedMetadataDelegate getSpExtendedMetadataProvider(ParserPool parserPool) throws MetadataProviderException, ResourceException {
-		ResourceBackedMetadataProvider provider =
-				new ResourceBackedMetadataProvider(new Timer(), new FilesystemResource(samlProps.get("spMetadataPath")));
+		String spMetadataPath = samlProps.get("spMetadataPath");
+		if (StringUtils.isBlank(spMetadataPath)) {
+			return null;
+		}
+
+		ResourceBackedMetadataProvider provider = new ResourceBackedMetadataProvider(new Timer(), new FilesystemResource(spMetadataPath));
 		provider.setParserPool(parserPool);
 
+		return new ExtendedMetadataDelegate(provider, getExtendedMetadata());
+	}
+
+	private ExtendedMetadata getExtendedMetadata() {
 		ExtendedMetadata extendedMetadata = new ExtendedMetadata();
 		extendedMetadata.setLocal(true);
 		extendedMetadata.setSecurityProfile("metaiop");
@@ -426,8 +443,7 @@ public class SamlBootstrap {
 		extendedMetadata.setIdpDiscoveryEnabled(false);
 		extendedMetadata.setSignMetadata(false);
 
-		ExtendedMetadataDelegate extendedMetadataDelegate = new ExtendedMetadataDelegate(provider, extendedMetadata);
-		return extendedMetadataDelegate;
+		return extendedMetadata;
 	}
 
 }
