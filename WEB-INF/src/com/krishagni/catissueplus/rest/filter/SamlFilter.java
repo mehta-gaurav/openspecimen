@@ -55,6 +55,7 @@ public class SamlFilter extends FilterChainProxy {
 				httpResp.sendRedirect(httpReq.getContextPath());
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			httpResp.sendRedirect(httpReq.getContextPath());
 		}
 	}
