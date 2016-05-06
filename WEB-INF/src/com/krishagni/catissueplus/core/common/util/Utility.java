@@ -317,35 +317,4 @@ public class Utility {
 			throw new RuntimeException(e);
 		}
 	}
-
-	public static String getAuthTokenFromCookie(HttpServletRequest httpReq) {
-		String cookieHdr = httpReq.getHeader("Cookie");
-		if (StringUtils.isBlank(cookieHdr)) {
-			return null;
-		}
-
-		String[] cookies = cookieHdr.split(";");
-		String authToken = null;
-		for (String cookie : cookies) {
-			if (!cookie.trim().startsWith("osAuthToken")) {
-				continue;
-			}
-
-			String[] authTokenParts = cookie.trim().split("=");
-			if (authTokenParts.length == 2) {
-				try {
-					authToken = URLDecoder.decode(authTokenParts[1], "utf-8");
-					if (authToken.startsWith("%")) {
-						authToken = authToken.substring(1, authToken.length() - 1);
-					}
-				} catch (Exception e) {
-
-				}
-				break;
-			}
-		}
-
-		return authToken;
-	}
-
 }

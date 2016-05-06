@@ -22,7 +22,7 @@
       from com.krishagni.catissueplus.core.auth.domain.AuthDomain where name = :domainName
     </query>
     
-    <query name="getDomainByAuthType">
+    <query name="getDomainByType">
       select 
         domain
       from 

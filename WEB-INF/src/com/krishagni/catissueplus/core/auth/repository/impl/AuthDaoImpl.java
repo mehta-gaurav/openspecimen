@@ -36,9 +36,9 @@ public class AuthDaoImpl extends AbstractDao<AuthDomain> implements AuthDao {
 	
 	@SuppressWarnings(value = {"unchecked"})
 	@Override
-	public AuthDomain getAuthDomainByAuthType(String authType) {
+	public AuthDomain getAuthDomainByType(String authType) {
 		List<AuthDomain> result = sessionFactory.getCurrentSession()
-				.getNamedQuery(GET_DOMAIN_BY_AUTH_TYPE)
+				.getNamedQuery(GET_DOMAIN_BY_TYPE)
 				.setString("authType", authType)
 				.list();
 
@@ -117,7 +117,7 @@ public class AuthDaoImpl extends AbstractDao<AuthDomain> implements AuthDao {
 
 	private static final String GET_DOMAIN_BY_NAME = FQN + ".getDomainByName";
 
-	private static final String GET_DOMAIN_BY_AUTH_TYPE = FQN + ".getDomainByAuthType";
+	private static final String GET_DOMAIN_BY_TYPE = FQN + ".getDomainByType";
 
 	private static final String GET_PROVIDER_BY_TYPE = AuthProvider.class.getName() + ".getProviderByType";
 	

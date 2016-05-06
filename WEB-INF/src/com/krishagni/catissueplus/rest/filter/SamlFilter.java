@@ -26,8 +26,8 @@ import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.PlusTransactional;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
+import com.krishagni.catissueplus.core.common.util.AuthUtil;
 import com.krishagni.catissueplus.core.common.util.ConfigUtil;
-import com.krishagni.catissueplus.core.common.util.Utility;
 
 public class SamlFilter extends FilterChainProxy {
 	private DaoFactory daoFactory;
@@ -43,7 +43,7 @@ public class SamlFilter extends FilterChainProxy {
 	}
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
-			throws IOException, ServletException {
+	throws IOException, ServletException {
 		HttpServletRequest httpReq = (HttpServletRequest) request;
 		HttpServletResponse httpResp = (HttpServletResponse) response;
 		
@@ -55,7 +55,6 @@ public class SamlFilter extends FilterChainProxy {
 				httpResp.sendRedirect(httpReq.getContextPath());
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			httpResp.sendRedirect(httpReq.getContextPath());
 		}
 	}
@@ -73,7 +72,7 @@ public class SamlFilter extends FilterChainProxy {
 	@PlusTransactional
 	private boolean enableSaml() {
 		boolean isSamlEnable = ConfigUtil.getInstance().getBoolSetting("auth", "saml_enable", false);
-		AuthDomain domain = isSamlEnable ? daoFactory.getAuthDao().getAuthDomainByAuthType("saml") : null;
+		AuthDomain domain = isSamlEnable ? daoFactory.getAuthDao().getAuthDomainByType("saml") : null;
 		if (domain != null) {
 			domain.getAuthProviderInstance();
 		}
@@ -82,7 +81,7 @@ public class SamlFilter extends FilterChainProxy {
 	}
 
 	private boolean isAuthenticated(HttpServletRequest httpReq) {
-		String authToken = Utility.getAuthTokenFromCookie(httpReq);
+		String authToken = AuthUtil.getAuthTokenFromCookie(httpReq);
 		if (authToken == null) {
 			return false;
 		}

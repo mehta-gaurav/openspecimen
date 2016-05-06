@@ -77,11 +77,11 @@ import edu.emory.mathcs.backport.java.util.Collections;
 @Configurable
 public class SamlBootstrap {
 
-	private static final String MATADATA_GEN_URL = "/saml/";
+	private static final String METADATA_GEN_URL = "/saml/";
 
 	private static final String LOGIN_URL = "/saml/login/**";
 
-	private static final String SSO_URL = "/saml/SSO/**";
+	private static final String SSO_URL = "/saml/sso/**";
 
 	private static final String METADATA_URL = "/saml/metadata/**";
 
@@ -144,10 +144,10 @@ public class SamlBootstrap {
 		SAMLProcessingFilter samlWebSSOProcessingFilter = getSamlWebSSOProcessingFilter(contextProvider, processor);
 		MetadataDisplayFilter metadataDisplayFilter = getMetadataDisplayFilter(contextProvider, metadata, keyManager);
 		MetadataGenerator metadataGenerator = getMetadataGenerator(keyManager, samlEntryPoint, samlWebSSOProcessingFilter);
-		MetadataGeneratorFilter metadataGenratorFilter = getmMtadataGeneratorFilter(metadataGenerator, metadata, metadataDisplayFilter);
+		MetadataGeneratorFilter metadataGenFilter = getMetadataGenFilter(metadataGenerator, metadata, metadataDisplayFilter);
 
 		Map<String, Filter> filters = new HashMap<String, Filter>();
-		filters.put(MATADATA_GEN_URL, metadataGenratorFilter);
+		filters.put(METADATA_GEN_URL, metadataGenFilter);
 		filters.put(LOGIN_URL, samlEntryPoint);
 		filters.put(SSO_URL, samlWebSSOProcessingFilter);
 		filters.put(METADATA_URL, metadataDisplayFilter);
@@ -158,7 +158,7 @@ public class SamlBootstrap {
 	/*
 	 * Create metadata for service provider on first request
 	 */
-	private MetadataGeneratorFilter getmMtadataGeneratorFilter(MetadataGenerator metadataGenerator, CachingMetadataManager metadata, 
+	private MetadataGeneratorFilter getMetadataGenFilter(MetadataGenerator metadataGenerator, CachingMetadataManager metadata, 
 			MetadataDisplayFilter metadataDisplayFilter) throws Exception {
 		MetadataGeneratorFilter metadataGeneratorFilter = new MetadataGeneratorFilter(metadataGenerator);
 		metadataGeneratorFilter.setManager(metadata);
@@ -353,11 +353,11 @@ public class SamlBootstrap {
 	 */
 	private KeyManager getKeyManager() {
 		DefaultResourceLoader loader = new FileSystemResourceLoader();
-		Resource storeFile = loader.getResource("file:" + samlProps.get("keyStorePath"));
-		Map<String, String> passwords = new HashMap<String, String>();
-		passwords.put(samlProps.get("keyStroreDefaultKey"), samlProps.get("keyStorePassword"));
+		Resource storeFile = loader.getResource("file:" + samlProps.get("keyStoreFilePath"));
+		Map<String, String> keyPasswords = new HashMap<String, String>();
+		keyPasswords.put(samlProps.get("keyAlias"), samlProps.get("keyPasswd"));
 
-		return new JKSKeyManager(storeFile, samlProps.get("keyStorePassword"), passwords, samlProps.get("keyStroreDefaultKey"));
+		return new JKSKeyManager(storeFile, samlProps.get("keyStorePasswd"), keyPasswords, samlProps.get("keyAlias"));
 	}
 
 	private HttpClient getHttpClient() {
@@ -435,8 +435,8 @@ public class SamlBootstrap {
 		extendedMetadata.setSecurityProfile("metaiop");
 		extendedMetadata.setSslSecurityProfile("pkix");
 		extendedMetadata.setSslHostnameVerification("default");
-		extendedMetadata.setSigningKey(samlProps.get("keyStroreDefaultKey"));
-		extendedMetadata.setEncryptionKey(samlProps.get("keyStroreDefaultKey"));
+		extendedMetadata.setSigningKey(samlProps.get("keyAlias"));
+		extendedMetadata.setEncryptionKey(samlProps.get("keyAlias"));
 		extendedMetadata.setRequireArtifactResolveSigned(false);
 		extendedMetadata.setRequireLogoutRequestSigned(false);
 		extendedMetadata.setRequireLogoutResponseSigned(false);

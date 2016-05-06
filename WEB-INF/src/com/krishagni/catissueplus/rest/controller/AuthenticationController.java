@@ -31,7 +31,7 @@ public class AuthenticationController {
 	
 	@Autowired
 	private UserAuthenticationService userAuthService;
-	
+
 	@Autowired
 	private HttpServletRequest httpReq;
 	

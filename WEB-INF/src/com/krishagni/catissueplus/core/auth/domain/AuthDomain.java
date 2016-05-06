@@ -83,6 +83,7 @@ public class AuthDomain {
 			return authService;
 		}
 		catch (final Exception e) {
+			e.printStackTrace();
 			throw OpenSpecimenException.userError(AuthProviderErrorCode.INVALID_AUTH_IMPL);
 		}
 	}

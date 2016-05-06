@@ -39,6 +39,8 @@ public class SamlAuthenticationServiceImpl extends SimpleUrlAuthenticationSucces
 	
 	public SamlAuthenticationServiceImpl(Map<String, String> props) {
 		SamlBootstrap samlBootStrap = new SamlBootstrap(this, props);
+
+		//calling initialize after all beans are injected
 		samlBootStrap.initialize();
 	}
 	
