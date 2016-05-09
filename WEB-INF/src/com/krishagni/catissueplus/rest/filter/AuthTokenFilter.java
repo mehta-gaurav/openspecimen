@@ -2,7 +2,6 @@ package com.krishagni.catissueplus.rest.filter;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -19,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.GenericFilterBean;
@@ -116,7 +114,7 @@ public class AuthTokenFilter extends GenericFilterBean {
 		User userDetails = null;
 		String authToken = httpReq.getHeader(OS_AUTH_TOKEN_HDR);
 		if (authToken == null) {
-			authToken = AuthUtil.getAuthTokenFromCookie(httpReq);
+			authToken = AuthUtil.getTokenFromCookie(httpReq);
 		}
 		
 		if (authToken != null) {

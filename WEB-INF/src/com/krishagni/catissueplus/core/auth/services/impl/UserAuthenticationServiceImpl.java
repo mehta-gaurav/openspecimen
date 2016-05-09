@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.hibernate.Hibernate;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
@@ -18,7 +17,6 @@ import com.krishagni.catissueplus.core.administrative.domain.User;
 import com.krishagni.catissueplus.core.audit.domain.UserApiCallLog;
 import com.krishagni.catissueplus.core.audit.services.AuditService;
 import com.krishagni.catissueplus.core.auth.AuthConfig;
-import com.krishagni.catissueplus.core.auth.domain.AuthDomain;
 import com.krishagni.catissueplus.core.auth.domain.AuthErrorCode;
 import com.krishagni.catissueplus.core.auth.domain.AuthToken;
 import com.krishagni.catissueplus.core.auth.domain.LoginAuditLog;
@@ -32,10 +30,7 @@ import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
 import com.krishagni.catissueplus.core.common.events.UserSummary;
-import com.krishagni.catissueplus.core.common.service.ConfigChangeListener;
-import com.krishagni.catissueplus.core.common.service.ConfigurationService;
 import com.krishagni.catissueplus.core.common.util.AuthUtil;
-import com.krishagni.catissueplus.core.common.util.ConfigUtil;
 import com.krishagni.catissueplus.core.common.util.Status;
 
 public class UserAuthenticationServiceImpl implements UserAuthenticationService {

@@ -51,23 +51,23 @@ public class SamlAuthenticationServiceImpl extends SimpleUrlAuthenticationSucces
 
 	@Override
 	@PlusTransactional
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-			Authentication authentication) throws IOException, ServletException {
+	public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse resp, Authentication auth)
+	throws IOException, ServletException {
 
-		User user = (User) authentication.getPrincipal();
+		User user = (User) auth.getPrincipal();
 
 		LoginDetail loginDetail = new LoginDetail();
-		loginDetail.setIpAddress(request.getRemoteAddr());
-		loginDetail.setApiUrl(request.getRequestURI());
+		loginDetail.setIpAddress(req.getRemoteAddr());
+		loginDetail.setApiUrl(req.getRequestURI());
 		loginDetail.setRequestMethod(RequestMethod.POST.name());
 
 		String encodedToken = userAuthService.generateToken(user, loginDetail);
 		Cookie cookie = new Cookie(OS_AUTH_TOKEN, encodedToken);
 		cookie.setMaxAge(-1);
-		cookie.setPath(request.getContextPath());
-		response.addCookie(cookie);
+		cookie.setPath(req.getContextPath());
+		resp.addCookie(cookie);
 	
-		getRedirectStrategy().sendRedirect(request, response, getDefaultTargetUrl());
+		getRedirectStrategy().sendRedirect(req, resp, getDefaultTargetUrl());
 	}
 
 }

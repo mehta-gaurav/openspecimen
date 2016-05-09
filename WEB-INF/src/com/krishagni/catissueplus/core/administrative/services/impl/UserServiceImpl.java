@@ -98,10 +98,15 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@PlusTransactional
 	public Object loadUserBySAML(SAMLCredential credential) throws UsernameNotFoundException {
+		//
+		// TODO: The domain name "saml" is hardcoded. We need to figure out whether
+		// domain name can be obtained from SAML credential
+		//
 		AuthDomain domain = daoFactory.getAuthDao().getAuthDomainByType("saml");
+
 		Map<String, String> props = domain.getAuthProvider().getProps();
 		String loginNameAttr = props.get("loginNameAttr");
-		String emailAttr = props.get("emailAddressAttr");
+		String emailAttr     = props.get("emailAddressAttr");
 		
 		User user = null;
 		if (StringUtils.isNotBlank(loginNameAttr)) {

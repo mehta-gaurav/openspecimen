@@ -48,8 +48,8 @@ public class SamlFilter extends FilterChainProxy {
 		HttpServletResponse httpResp = (HttpServletResponse) response;
 		
 		try {
-			boolean isSamlEnable = enableSaml();
-			if (isSamlEnable && !isAuthenticated(httpReq)) {
+			boolean samlEnabled = enableSaml();
+			if (samlEnabled && !isAuthenticated(httpReq)) {
 				super.doFilter(request, response, chain); 
 			} else {
 				httpResp.sendRedirect(httpReq.getContextPath());
@@ -62,8 +62,8 @@ public class SamlFilter extends FilterChainProxy {
 	
 	@SuppressWarnings({"deprecation" })
 	public void setFilterChain(Map<String, Filter> filters) {
-		Map<RequestMatcher, List<Filter>> filterChainMap = new HashMap<RequestMatcher, List<Filter>>();
-		for (Map.Entry<String, Filter>entry : filters.entrySet()) {
+		Map<RequestMatcher, List<Filter>> filterChainMap = new HashMap<>();
+		for (Map.Entry<String, Filter> entry : filters.entrySet()) {
 			filterChainMap.put(new AntPathRequestMatcher(entry.getKey()), Collections.singletonList(entry.getValue()));
 		}
 		
@@ -72,17 +72,27 @@ public class SamlFilter extends FilterChainProxy {
 
 	@PlusTransactional
 	private boolean enableSaml() {
-		boolean isSamlEnable = ConfigUtil.getInstance().getBoolSetting("auth", "saml_enable", false);
-		AuthDomain domain = isSamlEnable ? daoFactory.getAuthDao().getAuthDomainByType("saml") : null;
+		boolean samlEnabled = ConfigUtil.getInstance().getBoolSetting("auth", "saml_enable", false);
+		if (!samlEnabled) {
+			return false;
+		}
+
+		//
+		// TODO: This is assuming there will be only one SAML domain
+		//
+		AuthDomain domain = daoFactory.getAuthDao().getAuthDomainByType("saml");
 		if (domain != null) {
+			//
+			// This intialises SAML auth provider
+			//
 			domain.getAuthProviderInstance();
 		}
 
-		return isSamlEnable;
+		return samlEnabled;
 	}
 
 	private boolean isAuthenticated(HttpServletRequest httpReq) {
-		String authToken = AuthUtil.getAuthTokenFromCookie(httpReq);
+		String authToken = AuthUtil.getTokenFromCookie(httpReq);
 		if (authToken == null) {
 			return false;
 		}
@@ -91,9 +101,8 @@ public class SamlFilter extends FilterChainProxy {
 		tokenDetail.setToken(authToken);
 		tokenDetail.setIpAddress(httpReq.getRemoteAddr());
 
-		RequestEvent<TokenDetail> atReq = new RequestEvent<TokenDetail>(tokenDetail);
+		RequestEvent<TokenDetail> atReq = new RequestEvent<>(tokenDetail);
 		ResponseEvent<User> atResp = authService.validateToken(atReq);
-
 		return atResp.isSuccessful();
 	}
 }

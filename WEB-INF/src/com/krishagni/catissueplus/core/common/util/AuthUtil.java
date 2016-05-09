@@ -72,7 +72,7 @@ public class AuthUtil {
 		return new String(Base64.decode(token.getBytes()));
 	}
 	
-	public static String getAuthTokenFromCookie(HttpServletRequest httpReq) {
+	public static String getTokenFromCookie(HttpServletRequest httpReq) {
 		String cookieHdr = httpReq.getHeader("Cookie");
 		if (StringUtils.isBlank(cookieHdr)) {
 			return null;

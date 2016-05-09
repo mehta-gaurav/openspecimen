@@ -2,6 +2,7 @@ package com.krishagni.catissueplus.core.auth;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,8 +73,6 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 
 import com.krishagni.catissueplus.rest.filter.SamlFilter;
 
-import edu.emory.mathcs.backport.java.util.Collections;
-
 @Configurable
 public class SamlBootstrap {
 
@@ -96,7 +95,7 @@ public class SamlBootstrap {
 	@Autowired
 	private SamlFilter samlFilter;
 
-	SimpleUrlAuthenticationSuccessHandler successRedirectHandler;
+	private SimpleUrlAuthenticationSuccessHandler successRedirectHandler;
 
 	private Map<String, String> samlProps;
 

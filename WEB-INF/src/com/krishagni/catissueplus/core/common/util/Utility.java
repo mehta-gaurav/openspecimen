@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.FileNameMap;
 import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Calendar;
@@ -22,7 +21,6 @@ import java.util.Set;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;

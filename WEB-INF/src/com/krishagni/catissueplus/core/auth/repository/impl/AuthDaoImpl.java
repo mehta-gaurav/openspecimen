@@ -1,5 +1,3 @@
-
-
 package com.krishagni.catissueplus.core.auth.repository.impl;
 
 import java.util.Date;
