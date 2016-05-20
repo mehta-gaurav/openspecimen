@@ -870,6 +870,28 @@
     <property name="deDaoFactory" ref="deDaoFactory"/>
   </bean>
 
+  <bean id="dashletFactory" class="com.krishagni.catissueplus.core.dashboard.domain.factory.impl.DashletFactoryImpl">
+  </bean>
+
+  <bean id="viewDashletFactory" class="com.krishagni.catissueplus.core.dashboard.domain.factory.impl.ViewDashletsFactoryImpl">
+    <property name="daoFactory" ref="biospecimenDaoFactory" />
+  </bean>
+
+  <bean id="dashletSvc" class="com.krishagni.catissueplus.core.dashboard.service.impl.DashletServiceImpl">
+    <property name="daoFactory" ref="biospecimenDaoFactory" />
+    <property name="dashletFactory" ref="dashletFactory"/>
+    <property name="viewDashletFactory" ref="viewDashletFactory"/>
+    <property name="dataSources">
+      <map>
+        <entry key="AQL">
+          <bean class="com.krishagni.catissueplus.core.dashboard.service.impl.AqlDashletDataSource">
+            <property name="querySvc" ref="querySvc"/>
+          </bean>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
   <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">  
     <property name="dataSource" ref="dataSource"/>
   </bean>

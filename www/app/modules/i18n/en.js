@@ -101,7 +101,8 @@
       "reset_password": "Reset Password",
       "print": "Print",
       "skip": "Skip",
-      "back": "Back"
+      "back": "Back",
+      "dashboard": "Dashboard"
     }
   },
 

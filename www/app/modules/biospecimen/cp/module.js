@@ -157,6 +157,20 @@ angular.module('os.biospecimen.cp',
         },
         parent: 'cps'
       })
+      .state('cp-dashboard', {
+        url: '/dashboard',
+        templateUrl: 'modules/dashboard/list.html',
+        controller: 'DashletListCtrl',
+        resolve: {
+          dashboardDetail: function() {
+            return {
+              breadcrumbs: [{state: 'cp-list', title: 'cp.list'}],
+              name: 'CP'
+            }
+          }
+        },
+        parent: 'cps'
+      })
       .state('cp-addedit', {
         url: '/addedit/:cpId?mode',
         templateUrl: 'modules/biospecimen/cp/addedit.html',

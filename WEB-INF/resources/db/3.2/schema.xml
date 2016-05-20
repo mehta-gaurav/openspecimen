@@ -43,4 +43,125 @@
       <column name="SPECIMEN_TYPE"/>
     </createIndex>
   </changeSet>
+
+  <changeSet author="vlonushte" id="Dashlet config table">
+    <createTable tableName="OS_DASHLET_CONFIG">
+      <column name="IDENTIFIER" type="${int.type}" autoIncrement="${autoIncrement}">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+  
+      <column name="NAME" type="${text.type}(255)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="CAPTION" type="${text.type}(255)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="DATA_SOURCE_TYPE" type="${text.type}(16)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="CHART_TYPE" type="${text.type}(16)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="ACTIVITY_STATUS" type="${text.type}(16)">
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="vlonushte" id="Dashlet data-source options table">
+    <createTable tableName="OS_DASHLET_CFG_DS_OPTS">
+      <column name="DASHLET_CFG_ID" type="${int.type}">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="NAME" type="${text.type}(32)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="VALUE" type="${text.type}(512)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="vlonushte" id="Dashlet chart options table">
+    <createTable tableName="OS_DASHLET_CFG_CHART_OPTS">
+      <column name="DASHLET_CFG_ID" type="${int.type}">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="NAME" type="${text.type}(32)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="VALUE" type="${text.type}(512)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="vlonushte" id="Dashlet config sequence" dbms="oracle">
+    <createSequence
+      sequenceName="OS_DASHLET_CFG_SEQ"
+      startValue="1"
+      incrementBy="1"
+      ordered="true"/>
+  </changeSet>
+
+  <changeSet author="vlonushte" id="View Dashlets table">
+    <createTable tableName="OS_VIEW_DASHLETS">
+      <column name="IDENTIFIER" type="${int.type}" autoIncrement="${autoIncrement}">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+ 
+      <column name="NAME" type="${text.type}(255)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="viewName" type="${text.type}(16)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="vlonushte" id="View Dashlets sequence" dbms="oracle">
+    <createSequence
+      sequenceName="OS_VIEW_DASHLETS_SEQ"
+      startValue="1"
+      incrementBy="1"
+      ordered="true"/>
+  </changeSet>
+
+  <changeSet author="vlonushte" id="Maintaining dashlet and view dashlets relationship">
+    <createTable tableName="OS_DASHLET_VIEW_DASHLETS">
+      <column name="DASHLET_CFG_ID" type="${int.type}">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="VIEW_DASHLETS_ID" type="${int.type}">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+ 
+  <changeSet author="vlonushte" id="FK on dashlet config id">
+    <addForeignKeyConstraint
+      constraintName="FK_OS_DASHLET_CFG_ID"
+      baseTableName="OS_DASHLET_VIEW_DASHLETS"
+      baseColumnNames="DASHLET_CFG_ID"
+      referencedTableName="OS_DASHLET_CONFIG"
+      referencedColumnNames="IDENTIFIER"/>
+  </changeSet>
+
+  <changeSet author="vlonushte" id="FK on view dashelts id">
+    <addForeignKeyConstraint
+      constraintName="FK_OS_VIEW_DASHLETS__ID"
+      baseTableName="OS_DASHLET_VIEW_DASHLETS"
+      baseColumnNames="VIEW_DASHLETS_ID"
+      referencedTableName="OS_VIEW_DASHLETS"
+      referencedColumnNames="IDENTIFIER"/>
+  </changeSet>
 </databaseChangeLog>

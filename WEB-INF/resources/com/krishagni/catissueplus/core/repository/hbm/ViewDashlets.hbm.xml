@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false">
+  <class
+    name="com.krishagni.catissueplus.core.dashboard.domain.ViewDashlets"
+    table="OS_VIEW_DASHLETS">
+
+    <id name="id" column="IDENTIFIER">
+      <generator class="native">
+        <param name="sequence">OS_VIEW_DASHLETS_SEQ</param>
+      </generator>
+    </id>
+
+    <property name="name" column="NAME"/>
+
+    <property name="viewName" column="viewName"/>
+
+    <set name="dashlets" table="OS_DASHLET_VIEW_DASHLETS">
+      <key column="VIEW_DASHLETS_ID"/>
+      <many-to-many column="DASHLET_CFG_ID" class="com.krishagni.catissueplus.core.dashboard.domain.DashletConfig"/>
+    </set>
+
+    <query name="getViewDashletsById">
+      from
+        com.krishagni.catissueplus.core.dashboard.domain.ViewDashlets view
+      where
+        view.id = :id
+    </query>
+
+    <query name="getViewDashletsByName">
+      from
+        com.krishagni.catissueplus.core.dashboard.domain.ViewDashlets view
+      where
+        view.name = :name
+    </query>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false">
+  <class
+    name="com.krishagni.catissueplus.core.dashboard.domain.DashletConfig"
+    table="OS_DASHLET_CONFIG">
+
+    <id name="id" column="IDENTIFIER">
+      <generator class="native">
+        <param name="sequence">OS_DASHLET_CFG_SEQ</param>
+      </generator>
+    </id>
+
+    <property name="name" column="NAME"/>
+
+    <property name="caption" column="CAPTION"/>
+
+    <property name="dataSourceType" column="DATA_SOURCE_TYPE"/>
+
+    <map name="dataSourceOpts" table="OS_DASHLET_CFG_DS_OPTS" lazy="false">
+      <key column="DASHLET_CFG_ID"/>
+      <map-key column="NAME" type="string"/>
+      <element column="VALUE" type="string" not-null="true"/>
+    </map>
+
+    <property name="chartType" column="CHART_TYPE"/>
+
+    <map name="chartOpts" table="OS_DASHLET_CFG_CHART_OPTS" lazy="false">
+      <key column="DASHLET_CFG_ID"/>
+      <map-key column="NAME" type="string"/>
+      <element column="VALUE" type="string" not-null="true"/>
+    </map>
+
+    <property name="activityStatus" column="ACTIVITY_STATUS" />
+
+    <filter name="activeEntity"/>
+
+    <query name="getDashlets">
+      from com.krishagni.catissueplus.core.dashboard.domain.DashletConfig
+    </query>
+
+    <query name="getDashletByName">
+      from
+        com.krishagni.catissueplus.core.dashboard.domain.DashletConfig dashlet
+      where
+        dashlet.name = :name
+    </query>
+
+  </class>
+</hibernate-mapping>
