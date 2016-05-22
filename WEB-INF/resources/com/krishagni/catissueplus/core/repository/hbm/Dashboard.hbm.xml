@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false">
+  <class name="com.krishagni.catissueplus.core.dashboard.domain.Dashboard"
+    table="OS_DASHBOARDS">
+
+    <id name="id" column="IDENTIFIER">
+      <generator class="native">
+        <param name="sequence">OS_DASHBOARDS_SEQ</param>
+      </generator>
+    </id>
+
+    <many-to-one name="user" column="USER_ID"/>
+
+    <set name="dashlets" cascade="all-delete-orphan" inverse="true">
+      <key column="DASHBOARD_ID" />
+      <one-to-many class="com.krishagni.catissueplus.core.dashboard.domain.Dashlet"/>
+    </set>
+
+    <property name="activityStatus" column="ACTIVITY_STATUS"/>
+
+    <filter name="activeEntity"/>
+  </class>
+</hibernate-mapping>

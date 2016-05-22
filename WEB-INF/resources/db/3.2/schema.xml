@@ -51,4 +51,127 @@
       </column>
     </addColumn>
   </changeSet>
+
+  <changeSet author="vlonushte" id="Dashlet config table">
+    <createTable tableName="OS_DASHLET_CONFIG">
+      <column name="IDENTIFIER" type="${int.type}" autoIncrement="${autoIncrement}">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+
+      <column name="NAME" type="${text.type}(64)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="TITLE" type="${text.type}(255)">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="DATA_SOURCE" type="${clob.type}">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="CHART_OPTS" type="${clob.type}">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="ACTIVITY_STATUS" type="${text.type}(16)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="vlonushte" id="Dashlet config sequence" dbms="oracle">
+    <createSequence
+      sequenceName="OS_DASHLET_CFG_SEQ"
+      startValue="1"
+      incrementBy="1"
+      ordered="true"/>
+  </changeSet>
+
+  <changeSet author="vlonushte" id="Dashboard table">
+    <createTable tableName="OS_DASHBOARDS">
+      <column name="IDENTIFIER" type="${int.type}" autoIncrement="${autoIncrement}">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+
+      <column name="USER_ID" type="${int.type}">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="ACTIVITY_STATUS" type="${text.type}(16)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="vlonushte" id="Dashboard sequence" dbms="oracle">
+    <createSequence
+      sequenceName="OS_DASHBOARDS_SEQ"
+      startValue="1"
+      incrementBy="1"
+      ordered="true"/>
+  </changeSet>
+
+  <changeSet author="vlonushte" id="FK on dashboard user id">
+    <addForeignKeyConstraint
+      constraintName="FK_OS_DASHBOARD_USER_ID"
+      baseTableName="OS_DASHBOARDS"
+      baseColumnNames="USER_ID"
+      referencedTableName="CATISSUE_USER"
+      referencedColumnNames="IDENTIFIER"/>
+  </changeSet>
+
+  <changeSet author="vlonushte" id="Dashlet table">
+    <createTable tableName="OS_DASHLETS">
+      <column name="IDENTIFIER" type="${int.type}" autoIncrement="${autoIncrement}">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+
+      <column name="DASHBOARD_ID" type="${int.type}">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="DASHLET_CFG_ID" type="${int.type}">
+        <constraints nullable="false"/>
+      </column>
+
+      <column name="HEIGHT" type="${smallint.type}">
+      </column>
+
+      <column name="WIDTH" type="${smallint.type}">
+      </column>
+
+      <column name="ROWN" type="${smallint.type}">
+      </column>
+
+      <column name="COLN" type="${smallint.type}">
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="vlonushte" id="Dashlet sequence" dbms="oracle">
+    <createSequence
+      sequenceName="OS_DASHLETS_SEQ"
+      startValue="1"
+      incrementBy="1"
+      ordered="true"/>
+  </changeSet>
+
+  <changeSet author="vlonushte" id="FK on dashboard id">
+    <addForeignKeyConstraint
+      constraintName="FK_OS_DASH_DASHBOARD_ID"
+      baseTableName="OS_DASHLETS"
+      baseColumnNames="DASHBOARD_ID"
+      referencedTableName="OS_DASHBOARDS"
+      referencedColumnNames="IDENTIFIER"/>
+  </changeSet>
+
+  <changeSet author="vlonushte" id="FK on dashlet config id">
+    <addForeignKeyConstraint
+      constraintName="FK_OS_DASH_DASH_CFG_ID"
+      baseTableName="OS_DASHLETS"
+      baseColumnNames="DASHLET_CFG_ID"
+      referencedTableName="OS_DASHLET_CONFIG"
+      referencedColumnNames="IDENTIFIER"/>
+  </changeSet>
 </databaseChangeLog>
