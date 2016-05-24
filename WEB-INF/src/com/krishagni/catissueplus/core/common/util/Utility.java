@@ -14,6 +14,7 @@ import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +31,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krishagni.catissueplus.core.common.PdfUtil;
 
 import au.com.bytecode.opencsv.CSVWriter;
@@ -327,6 +330,22 @@ public class Utility {
 			return new String(cipher.doFinal(decodedValue));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	public static Map<String, Object> jsonStringToMap(String jsonString) {
+		try {
+			return new ObjectMapper().readValue(jsonString, new TypeReference<HashMap<String, Object>>(){});
+		} catch (Exception e) {
+			throw new RuntimeException("Error on parsing json string", e);
+		}
+	}
+
+	public static String mapToJsonString(Map<String, Object> jsonMap) {
+		try {
+			return new ObjectMapper().writeValueAsString(jsonMap);
+		} catch (IOException e) {
+			throw new RuntimeException("Error on converting map to json", e);
 		}
 	}
 }

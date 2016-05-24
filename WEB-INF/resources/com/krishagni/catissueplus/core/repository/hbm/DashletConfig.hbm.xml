@@ -22,5 +22,12 @@
     <property name="activityStatus" column="ACTIVITY_STATUS"/>
 
     <filter name="activeEntity"/>
+
+    <query name="getDashletCfgByName">
+      from
+        com.krishagni.catissueplus.core.dashboard.domain.DashletConfig
+      where
+        name = :name
+    </query>
   </class>
 </hibernate-mapping>

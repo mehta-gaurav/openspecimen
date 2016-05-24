@@ -870,6 +870,23 @@
     <property name="deDaoFactory" ref="deDaoFactory"/>
   </bean>
 
+  <bean id="dataSourceReg" class="com.krishagni.catissueplus.core.dashboard.serivce.impl.DefaultDataSourceRegistrar">
+    <property name="dataSourceFactories">
+      <list>
+        <bean class="com.krishagni.catissueplus.core.dashboard.serivce.impl.AqlDataSourceFactoryImpl"/>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="dashletCfgFactory" class="com.krishagni.catissueplus.core.dashboard.domain.factory.impl.DashletConfigFactoryImpl">
+    <property name="dataSourceReg" ref="dataSourceReg"/>
+  </bean>
+
+  <bean id="dashletCfgSvc" class="com.krishagni.catissueplus.core.dashboard.serivce.impl.DashletConfigServiceImpl">
+    <property name="daoFactory" ref="biospecimenDaoFactory"/>
+    <property name="dashletCfgFactory" ref="dashletCfgFactory"/>
+  </bean>
+
   <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">  
     <property name="dataSource" ref="dataSource"/>
   </bean>
