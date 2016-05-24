@@ -159,7 +159,7 @@
 
   <changeSet author="vlonushte" id="FK on dashboard id">
     <addForeignKeyConstraint
-      constraintName="FK_OS_DASH_DASHBOARD_ID"
+      constraintName="FK_OS_DASHLET_DB_ID"
       baseTableName="OS_DASHLETS"
       baseColumnNames="DASHBOARD_ID"
       referencedTableName="OS_DASHBOARDS"
@@ -168,7 +168,7 @@
 
   <changeSet author="vlonushte" id="FK on dashlet config id">
     <addForeignKeyConstraint
-      constraintName="FK_OS_DASH_DASH_CFG_ID"
+      constraintName="FK_OS_DASHLET_CFG_ID"
       baseTableName="OS_DASHLETS"
       baseColumnNames="DASHLET_CFG_ID"
       referencedTableName="OS_DASHLET_CONFIG"
