@@ -48,7 +48,9 @@ import com.krishagni.catissueplus.core.common.repository.UpgradeLogDao;
 import com.krishagni.catissueplus.core.common.repository.impl.ConfigSettingDaoImpl;
 import com.krishagni.catissueplus.core.common.repository.impl.UniqueIdGeneratorImpl;
 import com.krishagni.catissueplus.core.common.repository.impl.UpgradeLogDaoImpl;
+import com.krishagni.catissueplus.core.dashboard.repository.DashboardDao;
 import com.krishagni.catissueplus.core.dashboard.repository.DashletConfigDao;
+import com.krishagni.catissueplus.core.dashboard.repository.impl.DashboardDaoImpl;
 import com.krishagni.catissueplus.core.dashboard.repository.impl.DashletConfigDaoImpl;
 
 public class DaoFactoryImpl implements DaoFactory {
@@ -252,6 +254,13 @@ public class DaoFactoryImpl implements DaoFactory {
 	@Override
 	public DashletConfigDao getDashletConfigDao() {
 		DashletConfigDaoImpl dao = new DashletConfigDaoImpl();
+		setSessionFactory(dao);
+		return dao;
+	}
+
+	@Override
+	public DashboardDao getDashboardDao() {
+		DashboardDaoImpl dao = new DashboardDaoImpl();
 		setSessionFactory(dao);
 		return dao;
 	}

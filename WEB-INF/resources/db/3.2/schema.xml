@@ -171,7 +171,7 @@
       constraintName="FK_OS_DASHLET_CFG_ID"
       baseTableName="OS_DASHLETS"
       baseColumnNames="DASHLET_CFG_ID"
-      referencedTableName="OS_DASHLET_CONFIG"
+      referencedTableName="OS_DASHLET_CONFIGS"
       referencedColumnNames="IDENTIFIER"/>
   </changeSet>
 </databaseChangeLog>

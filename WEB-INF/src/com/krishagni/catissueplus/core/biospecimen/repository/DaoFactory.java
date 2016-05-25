@@ -18,6 +18,7 @@ import com.krishagni.catissueplus.core.auth.repository.AuthDao;
 import com.krishagni.catissueplus.core.common.repository.ConfigSettingDao;
 import com.krishagni.catissueplus.core.common.repository.UniqueIdGenerator;
 import com.krishagni.catissueplus.core.common.repository.UpgradeLogDao;
+import com.krishagni.catissueplus.core.dashboard.repository.DashboardDao;
 import com.krishagni.catissueplus.core.dashboard.repository.DashletConfigDao;
 
 public interface DaoFactory {
@@ -74,4 +75,6 @@ public interface DaoFactory {
 	public UpgradeLogDao getUpgradeLogDao();
 
 	public DashletConfigDao getDashletConfigDao();
+
+	public DashboardDao getDashboardDao();
 } 
