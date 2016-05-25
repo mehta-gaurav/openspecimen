@@ -870,8 +870,8 @@
     <property name="deDaoFactory" ref="deDaoFactory"/>
   </bean>
 
-  <bean id="dataSourceReg" class="com.krishagni.catissueplus.core.dashboard.serivce.impl.DefaultDataSourceRegistrar">
-    <property name="dataSourceFactories">
+  <bean id="dataSourceRegistrar" class="com.krishagni.catissueplus.core.dashboard.serivce.impl.DefaultDataSourceRegistrar">
+    <property name="factories">
       <list>
         <bean class="com.krishagni.catissueplus.core.dashboard.serivce.impl.AqlDataSourceFactoryImpl"/>
       </list>
@@ -879,7 +879,7 @@
   </bean>
 
   <bean id="dashletCfgFactory" class="com.krishagni.catissueplus.core.dashboard.domain.factory.impl.DashletConfigFactoryImpl">
-    <property name="dataSourceReg" ref="dataSourceReg"/>
+    <property name="dataSourceRegistrar" ref="dataSourceRegistrar"/>
   </bean>
 
   <bean id="dashletCfgSvc" class="com.krishagni.catissueplus.core.dashboard.serivce.impl.DashletConfigServiceImpl">

@@ -1,5 +1,6 @@
 package com.krishagni.catissueplus.core.dashboard.domain.factory.impl;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,10 +18,10 @@ import com.krishagni.catissueplus.core.dashboard.serivce.DataSourceFactory;
 import com.krishagni.catissueplus.core.dashboard.serivce.DataSourceRegistrar;
 
 public class DashletConfigFactoryImpl implements DashletConfigFactory {
-	private DataSourceRegistrar dataSourceReg;
+	private DataSourceRegistrar dataSourceRegistrar;
 
-	public void setDataSourceReg(DataSourceRegistrar dataSourceReg) {
-		this.dataSourceReg = dataSourceReg;
+	public void setDataSourceRegistrar(DataSourceRegistrar dataSourceRegistrar) {
+		this.dataSourceRegistrar = dataSourceRegistrar;
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class DashletConfigFactoryImpl implements DashletConfigFactory {
 	private void setName(DashletConfigDetail detail, DashletConfig dashletCfg, OpenSpecimenException ose) {
 		String name = detail.getName();
 		if (StringUtils.isBlank(name)) {
-			ose.addError(DashletConfigErrorCode.NAME_REQUIRED);
+			ose.addError(DashletConfigErrorCode.NAME_REQ);
 			return;
 		}
 
@@ -68,7 +69,7 @@ public class DashletConfigFactoryImpl implements DashletConfigFactory {
 	private void setTitle(DashletConfigDetail detail, DashletConfig dashletCfg, OpenSpecimenException ose) {
 		String title = detail.getTitle();
 		if (StringUtils.isBlank(title)) {
-			ose.addError(DashletConfigErrorCode.TITLE_REQUIRED);
+			ose.addError(DashletConfigErrorCode.TITLE_REQ);
 			return;
 		}
 
@@ -86,31 +87,29 @@ public class DashletConfigFactoryImpl implements DashletConfigFactory {
 	private void setDataSource(DashletConfigDetail detail, DashletConfig dashletCfg, OpenSpecimenException ose) {
 		Map<String, Object> dataSource = detail.getDataSource();
 		if (dataSource == null) {
-			ose.addError(DashletConfigErrorCode.DATA_SOURCE_REQUIRED);
+			ose.addError(DashletConfigErrorCode.DS_REQ);
 			return;
 		}
 
 		String type = (String) dataSource.get("type");
 		if (StringUtils.isBlank(type)) {
-			ose.addError(DashletConfigErrorCode.DS_TYPE_REQUIRED);
+			ose.addError(DashletConfigErrorCode.DS_TYPE_REQ);
 			return;
 		}
 
-		DataSourceFactory factory = dataSourceReg.getDataSourceFactory(type);
+		DataSourceFactory factory = dataSourceRegistrar.getFactory(type);
 		if (factory == null) {
-			ose.addError(DashletConfigErrorCode.INVALID_DS_TYPE);
+			ose.addError(DashletConfigErrorCode.INVALID_DS_TYPE, type);
 			return;
 		}
 
 		Map<String, Object> options = (Map<String, Object>) dataSource.get("options");
 		if (options == null) {
-			ose.addError(DashletConfigErrorCode.OPTIONS_REQUIRED);
-			return;
+			options = Collections.emptyMap();
 		}
 
 		factory.createDataSource(options);
-
-		dashletCfg.setDataSource(Utility.mapToJsonString(dataSource));
+		dashletCfg.setDataSource(Utility.mapToJson(dataSource));
 	}
 
 	private void setDataSource(DashletConfigDetail detail, DashletConfig existing, DashletConfig dashletCfg, OpenSpecimenException ose) {
@@ -124,11 +123,10 @@ public class DashletConfigFactoryImpl implements DashletConfigFactory {
 	private void setChartOpts(DashletConfigDetail detail, DashletConfig dashletCfg, OpenSpecimenException ose) {
 		Map<String, Object> chartOpts = detail.getChartOpts();
 		if (chartOpts == null) {
-			ose.addError(DashletConfigErrorCode.CHART_OPTS_REQUIRED);
-			return;
+			chartOpts = Collections.emptyMap();
 		}
 
-		dashletCfg.setChartOpts(Utility.mapToJsonString(chartOpts));
+		dashletCfg.setChartOpts(Utility.mapToJson(chartOpts));
 	}
 
 	private void setChartOpts(DashletConfigDetail detail, DashletConfig existing, DashletConfig dashletCfg, OpenSpecimenException ose) {
@@ -150,8 +148,7 @@ public class DashletConfigFactoryImpl implements DashletConfigFactory {
 		}
 	}
 
-	private void setActivityStatus(DashletConfigDetail detail, DashletConfig existing, DashletConfig dashletCfg,
-			OpenSpecimenException ose) {
+	private void setActivityStatus(DashletConfigDetail detail, DashletConfig existing, DashletConfig dashletCfg, OpenSpecimenException ose) {
 		if (existing == null || detail.isAttrModified("activityStatus")) {
 			setActivityStatus(detail, dashletCfg, ose);
 		} else {

@@ -7,13 +7,13 @@ import com.krishagni.catissueplus.core.common.events.ResponseEvent;
 import com.krishagni.catissueplus.core.dashboard.events.DashletConfigDetail;
 
 public interface DashletConfigService {
-	public ResponseEvent<List<DashletConfigDetail>> getDashletConfigs();
+	public ResponseEvent<List<DashletConfigDetail>> getConfigs();
 
-	public ResponseEvent<DashletConfigDetail> getDashletConfig(RequestEvent<Long> req);
+	public ResponseEvent<DashletConfigDetail> getConfig(RequestEvent<Long> req);
 
-	public ResponseEvent<DashletConfigDetail> createDashletConfig(RequestEvent<DashletConfigDetail> req);
+	public ResponseEvent<DashletConfigDetail> createConfig(RequestEvent<DashletConfigDetail> req);
 
-	public ResponseEvent<DashletConfigDetail> updateDashletConfig(RequestEvent<DashletConfigDetail> req);
+	public ResponseEvent<DashletConfigDetail> updateConfig(RequestEvent<DashletConfigDetail> req);
 
-	public ResponseEvent<DashletConfigDetail> deleteDashletConfig(RequestEvent<DashletConfigDetail> req);
+	public ResponseEvent<DashletConfigDetail> deleteConfig(RequestEvent<DashletConfigDetail> req);
 }

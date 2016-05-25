@@ -28,51 +28,43 @@ public class DashletConfigController {
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
 	public List<DashletConfigDetail> getDashletConfigs() {
-		ResponseEvent<List<DashletConfigDetail>> resp = dashletCfgSvc.getDashletConfigs();
-		resp.throwErrorIfUnsuccessful();
-
-		return resp.getPayload();
+		return response(dashletCfgSvc.getConfigs());
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
 	public DashletConfigDetail getDashletConfig(@PathVariable("id") Long id) {
-		ResponseEvent<DashletConfigDetail> resp = dashletCfgSvc.getDashletConfig(getRequest(id));
-		resp.throwErrorIfUnsuccessful();
-
-		return resp.getPayload();
+		return response(dashletCfgSvc.getConfig(request(id)));
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	public DashletConfigDetail createDashletConfig(@RequestBody DashletConfigDetail dashletCfg) {
-		ResponseEvent<DashletConfigDetail> resp = dashletCfgSvc.createDashletConfig(getRequest(dashletCfg));
-		resp.throwErrorIfUnsuccessful();
-
-		return resp.getPayload();
+	public DashletConfigDetail createDashletConfig(@RequestBody DashletConfigDetail cfg) {
+		return response(dashletCfgSvc.createConfig(request(cfg)));
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
 	public DashletConfigDetail updateDashletConfig(
-			@PathVariable("id")
-			Long id,
+		@PathVariable("id")
+		Long id,
 
-			@RequestBody
-			DashletConfigDetail dashletCfg) {
+		@RequestBody
+		DashletConfigDetail cfg) {
 
-		dashletCfg.setId(id);
-
-		ResponseEvent<DashletConfigDetail> resp = dashletCfgSvc.updateDashletConfig(getRequest(dashletCfg));
-		resp.throwErrorIfUnsuccessful();
-
-		return resp.getPayload();
+		cfg.setId(id);
+		return response(dashletCfgSvc.updateConfig(request(cfg)));
 	}
 
-	private <T> RequestEvent<T> getRequest(T payload) {
+	private <T> RequestEvent<T> request(T payload) {
 		return new RequestEvent<T>(payload);
+	}
+
+	private <T> T response(ResponseEvent<T> resp) {
+		resp.throwErrorIfUnsuccessful();
+		return resp.getPayload();
 	}
 }

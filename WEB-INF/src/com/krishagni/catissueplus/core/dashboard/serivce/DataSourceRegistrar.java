@@ -1,7 +1,7 @@
 package com.krishagni.catissueplus.core.dashboard.serivce;
 
 public interface DataSourceRegistrar {
-	public void register(DataSourceFactory dataSourceFactory);
+	public void register(DataSourceFactory factory);
 
-	public DataSourceFactory getDataSourceFactory(String type);
+	public DataSourceFactory getFactory(String type);
 }

@@ -77,17 +77,14 @@ public class DashletConfigDetail extends AttributeModifiedSupport {
 		detail.setId(dashletCfg.getId());
 		detail.setName(dashletCfg.getName());
 		detail.setTitle(dashletCfg.getTitle());
-		detail.setDataSource(Utility.jsonStringToMap(dashletCfg.getDataSource()));
-		detail.setChartOpts(Utility.jsonStringToMap(dashletCfg.getChartOpts()));
+		detail.setDataSource(Utility.jsonToMap(dashletCfg.getDataSource()));
+		detail.setChartOpts(Utility.jsonToMap(dashletCfg.getChartOpts()));
 		detail.setActivityStatus(dashletCfg.getActivityStatus());
 
 		return detail;
 	}
 
 	public static List<DashletConfigDetail> from(Collection<DashletConfig> dashletCfgs) {
-		return dashletCfgs.stream()
-			.map(dashletCfg -> {
-				return from(dashletCfg);
-			}).collect(Collectors.toList());
+		return dashletCfgs.stream().map(DashletConfigDetail::from).collect(Collectors.toList());
 	}
 }

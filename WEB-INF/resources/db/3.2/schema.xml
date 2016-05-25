@@ -53,7 +53,7 @@
   </changeSet>
 
   <changeSet author="vlonushte" id="Dashlet config table">
-    <createTable tableName="OS_DASHLET_CONFIG">
+    <createTable tableName="OS_DASHLET_CONFIGS">
       <column name="IDENTIFIER" type="${int.type}" autoIncrement="${autoIncrement}">
         <constraints primaryKey="true" nullable="false"/>
       </column>

@@ -5,5 +5,5 @@ import java.util.Map;
 public interface DataSourceFactory {
 	public String getType();
 
-	public DataSource createDataSource(Map<String, Object> dataSourceOpts);
+	public DataSource createDataSource(Map<String, Object> opts);
 }

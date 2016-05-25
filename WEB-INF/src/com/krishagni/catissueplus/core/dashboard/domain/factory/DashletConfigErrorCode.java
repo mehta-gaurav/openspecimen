@@ -7,19 +7,15 @@ public enum DashletConfigErrorCode implements ErrorCode {
 
 	DUP_NAME,
 
-	NAME_REQUIRED,
+	NAME_REQ,
 
-	TITLE_REQUIRED,
+	TITLE_REQ,
 
-	DATA_SOURCE_REQUIRED,
+	DS_REQ,
 
-	DS_TYPE_REQUIRED,
+	DS_TYPE_REQ,
 
-	INVALID_DS_TYPE,
-
-	OPTIONS_REQUIRED,
-
-	CHART_OPTS_REQUIRED;
+	INVALID_DS_TYPE;
 
 	@Override
 	public String code() {

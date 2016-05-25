@@ -8,5 +8,5 @@ import com.krishagni.catissueplus.core.dashboard.domain.DashletConfig;
 public interface DashletConfigDao extends Dao<DashletConfig> {
 	public List<DashletConfig> getDashletConfigs();
 
-	public DashletConfig getDashletConfigByName(String name);
+	public DashletConfig getByName(String name);
 }

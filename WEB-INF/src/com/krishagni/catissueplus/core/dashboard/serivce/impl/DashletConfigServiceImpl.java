@@ -29,43 +29,10 @@ public class DashletConfigServiceImpl implements DashletConfigService {
 
 	@Override
 	@PlusTransactional
-	public ResponseEvent<List<DashletConfigDetail>> getDashletConfigs() {
+	public ResponseEvent<List<DashletConfigDetail>> getConfigs() {
 		try {
-			List<DashletConfig> dashletCfgs = daoFactory.getDashletConfigDao().getDashletConfigs();
-			return ResponseEvent.response(DashletConfigDetail.from(dashletCfgs));
-		} catch (Exception e) {
-			return ResponseEvent.serverError(e);
-		}
-	}
-
-	@Override
-	@PlusTransactional
-	public ResponseEvent<DashletConfigDetail> getDashletConfig(RequestEvent<Long> req) {
-		try {
-			DashletConfig dashletCfg = daoFactory.getDashletConfigDao().getById(req.getPayload());
-			if (dashletCfg == null) {
-				return ResponseEvent.userError(DashletConfigErrorCode.NOT_FOUND);
-			}
-
-			return ResponseEvent.response(DashletConfigDetail.from(dashletCfg));
-		} catch (Exception e) {
-			return ResponseEvent.serverError(e);
-		}
-	}
-
-	@Override
-	@PlusTransactional
-	public ResponseEvent<DashletConfigDetail> createDashletConfig(RequestEvent<DashletConfigDetail> req) {
-		try {
-			DashletConfigDetail detail = req.getPayload();
-			DashletConfig dashletCfg = dashletCfgFactory.createDashletConfig(detail);
-
-			OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
-			ensureUniqueName(null, dashletCfg, ose);
-			ose.checkAndThrow();
-
-			daoFactory.getDashletConfigDao().saveOrUpdate(dashletCfg);
-			return ResponseEvent.response(DashletConfigDetail.from(dashletCfg));
+			List<DashletConfig> cfgs = daoFactory.getDashletConfigDao().getDashletConfigs();
+			return ResponseEvent.response(DashletConfigDetail.from(cfgs));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
 		} catch (Exception e) {
@@ -75,22 +42,62 @@ public class DashletConfigServiceImpl implements DashletConfigService {
 
 	@Override
 	@PlusTransactional
-	public ResponseEvent<DashletConfigDetail> updateDashletConfig(RequestEvent<DashletConfigDetail> req) {
+	public ResponseEvent<DashletConfigDetail> getConfig(RequestEvent<Long> req) {
+		//
+		// TODO: We should be able to support getConfig by both ID and name
+		//
+
+		try {
+			DashletConfig cfg = daoFactory.getDashletConfigDao().getById(req.getPayload());
+			if (cfg == null) {
+				return ResponseEvent.userError(DashletConfigErrorCode.NOT_FOUND, req.getPayload());
+			}
+
+			return ResponseEvent.response(DashletConfigDetail.from(cfg));
+		} catch (OpenSpecimenException ose) {
+			return ResponseEvent.error(ose);
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
+		}
+	}
+
+	@Override
+	@PlusTransactional
+	public ResponseEvent<DashletConfigDetail> createConfig(RequestEvent<DashletConfigDetail> req) {
+		try {
+			DashletConfig cfg = dashletCfgFactory.createDashletConfig(req.getPayload());
+
+			OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
+			ensureUniqueName(null, cfg, ose);
+			ose.checkAndThrow();
+
+			daoFactory.getDashletConfigDao().saveOrUpdate(cfg);
+			return ResponseEvent.response(DashletConfigDetail.from(cfg));
+		} catch (OpenSpecimenException ose) {
+			return ResponseEvent.error(ose);
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
+		}
+	}
+
+	@Override
+	@PlusTransactional
+	public ResponseEvent<DashletConfigDetail> updateConfig(RequestEvent<DashletConfigDetail> req) {
 		try {
 			DashletConfigDetail detail = req.getPayload();
 			DashletConfig existing = daoFactory.getDashletConfigDao().getById(detail.getId());
 			if (existing == null) {
-				return ResponseEvent.userError(DashletConfigErrorCode.NOT_FOUND);
+				return ResponseEvent.userError(DashletConfigErrorCode.NOT_FOUND, detail.getId());
 			}
 
-			DashletConfig dashletCfg = dashletCfgFactory.createDashletConfig(existing, detail);
+			DashletConfig cfg = dashletCfgFactory.createDashletConfig(existing, detail);
 
 			OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
-			ensureUniqueName(existing, dashletCfg, ose);
+			ensureUniqueName(existing, cfg, ose);
 			ose.checkAndThrow();
 
-			existing.update(dashletCfg);
-			return ResponseEvent.response(DashletConfigDetail.from(dashletCfg));
+			existing.update(cfg);
+			return ResponseEvent.response(DashletConfigDetail.from(cfg));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
 		} catch (Exception e) {
@@ -100,19 +107,19 @@ public class DashletConfigServiceImpl implements DashletConfigService {
 
 	@Override
 	@PlusTransactional
-	public ResponseEvent<DashletConfigDetail> deleteDashletConfig(RequestEvent<DashletConfigDetail> req) {
+	public ResponseEvent<DashletConfigDetail> deleteConfig(RequestEvent<DashletConfigDetail> req) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private void ensureUniqueName(DashletConfig existing, DashletConfig newDashletCfg, OpenSpecimenException ose) {
-		if (existing != null && existing.getName().equals(newDashletCfg.getName())) {
+	private void ensureUniqueName(DashletConfig existing, DashletConfig newCfg, OpenSpecimenException ose) {
+		if (existing != null && existing.getName().equals(newCfg.getName())) {
 			return;
 		}
 
-		DashletConfig dashletConfig = daoFactory.getDashletConfigDao().getDashletConfigByName(newDashletCfg.getName());
-		if (dashletConfig != null) {
-			ose.addError(DashletConfigErrorCode.DUP_NAME, newDashletCfg.getName());
+		DashletConfig dbCfg = daoFactory.getDashletConfigDao().getByName(newCfg.getName());
+		if (dbCfg != null) {
+			ose.addError(DashletConfigErrorCode.DUP_NAME, newCfg.getName());
 		}
 	}
 

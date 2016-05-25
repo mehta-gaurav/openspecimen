@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -333,19 +334,27 @@ public class Utility {
 		}
 	}
 
-	public static Map<String, Object> jsonStringToMap(String jsonString) {
+	public static Map<String, Object> jsonToMap(String json) {
 		try {
-			return new ObjectMapper().readValue(jsonString, new TypeReference<HashMap<String, Object>>(){});
+			if (StringUtils.isBlank(json)) {
+				return Collections.emptyMap();
+			}
+
+			return new ObjectMapper().readValue(json, new TypeReference<HashMap<String, Object>>(){});
 		} catch (Exception e) {
-			throw new RuntimeException("Error on parsing json string", e);
+			throw new RuntimeException("Error parsing JSON into Map:\n" + json, e);
 		}
 	}
 
-	public static String mapToJsonString(Map<String, Object> jsonMap) {
+	public static String mapToJson(Map<String, Object> map) {
 		try {
-			return new ObjectMapper().writeValueAsString(jsonMap);
+			if (map == null) {
+				map = Collections.emptyMap();
+			}
+
+			return new ObjectMapper().writeValueAsString(map);
 		} catch (IOException e) {
-			throw new RuntimeException("Error on converting map to json", e);
+			throw new RuntimeException("Error on converting Map to JSON", e);
 		}
 	}
 }
