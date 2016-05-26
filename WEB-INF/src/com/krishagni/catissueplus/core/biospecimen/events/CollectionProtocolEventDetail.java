@@ -30,6 +30,10 @@ public class CollectionProtocolEventDetail {
 	private String clinicalDiagnosis;
 	
 	private String clinicalStatus;
+
+	private String visitNamePrintMode;
+
+	private Integer visitNamePrintCopies;
 	
 	private String activityStatus;
 	

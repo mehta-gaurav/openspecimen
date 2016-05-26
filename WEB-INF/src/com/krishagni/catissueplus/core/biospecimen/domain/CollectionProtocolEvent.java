@@ -14,6 +14,7 @@ import org.hibernate.envers.NotAudited;
 import org.springframework.beans.BeanUtils;
 
 import com.krishagni.catissueplus.core.administrative.domain.Site;
+import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocol.VisitNameAutoPrintMode;
 import com.krishagni.catissueplus.core.biospecimen.domain.factory.SrErrorCode;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.util.Status;
@@ -38,9 +39,13 @@ public class CollectionProtocolEvent implements Comparable<CollectionProtocolEve
 	private String clinicalDiagnosis;
 	
 	private String clinicalStatus;
+
+	private VisitNameAutoPrintMode visitNamePrintMode;
+
+	private Integer visitNamePrintCopies;
 	
 	private String activityStatus;
-	
+
 	private Set<SpecimenRequirement> specimenRequirements = new LinkedHashSet<SpecimenRequirement>();
 
 	private Set<Visit> specimenCollectionGroups = new HashSet<Visit>();

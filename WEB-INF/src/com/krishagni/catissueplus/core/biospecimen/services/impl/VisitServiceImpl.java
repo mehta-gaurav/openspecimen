@@ -491,7 +491,8 @@ public class VisitServiceImpl implements VisitService, ObjectStateParamsResolver
 		existing.setNameIfEmpty();
 		daoFactory.getVisitsDao().saveOrUpdate(existing);
 		existing.addOrUpdateExtension();
-		existing.prePrintLabels(prevStatus);
+		existing.printLabel(prevStatus);
+		existing.prePrintSpecimenLabels(prevStatus);
 		return VisitDetail.from(existing, false, false);
 	}
 	

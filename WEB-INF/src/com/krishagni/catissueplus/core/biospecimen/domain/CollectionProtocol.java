@@ -42,6 +42,13 @@ public class CollectionProtocol extends BaseExtensionEntity {
 		NONE;
 	}
 
+
+	public enum VisitNameAutoPrintMode {
+		PRE_PRINT,
+		ON_COMPLETION,
+		NONE;
+	}
+
 	private static final String ENTITY_NAME = "collection_protocol";
 	
 	private String title;
@@ -81,6 +88,10 @@ public class CollectionProtocol extends BaseExtensionEntity {
 	private Boolean manualVisitNameEnabled;
 	
 	private Boolean manualSpecLabelEnabled;
+
+	private VisitNameAutoPrintMode visitNamePrintMode = VisitNameAutoPrintMode.NONE;
+
+	private Integer visitNamePrintcopies;
 	
 	private SpecimenLabelPrePrintMode spmnLabelPrePrintMode = SpecimenLabelPrePrintMode.NONE;
 	
