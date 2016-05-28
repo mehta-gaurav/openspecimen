@@ -23,7 +23,6 @@ import com.krishagni.catissueplus.core.dashboard.domain.factory.DashboardErrorCo
 import com.krishagni.catissueplus.core.dashboard.domain.factory.DashboardFactory;
 import com.krishagni.catissueplus.core.dashboard.domain.factory.DashletConfigErrorCode;
 import com.krishagni.catissueplus.core.dashboard.events.DashboardDetail;
-import com.krishagni.catissueplus.core.dashboard.events.DashletConfigDetail;
 import com.krishagni.catissueplus.core.dashboard.events.DashletDetail;
 
 public class DashboardFactoryImpl implements DashboardFactory {
@@ -40,9 +39,9 @@ public class DashboardFactoryImpl implements DashboardFactory {
 
 	@Override
 	public Dashboard createDashboard(Dashboard existing, DashboardDetail detail) {
-		Dashboard dashboard = new Dashboard();
 		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
 
+		Dashboard dashboard = new Dashboard();
 		if (existing != null) {
 			dashboard.setId(existing.getId());
 		}
@@ -56,21 +55,29 @@ public class DashboardFactoryImpl implements DashboardFactory {
 	}
 
 	private void setUser(DashboardDetail detail, Dashboard dashboard, OpenSpecimenException ose) {
-		UserSummary userSummary = detail.getUser();
-		if (userSummary == null) {
+		UserSummary inputUser = detail.getUser();
+		if (inputUser == null) {
 			dashboard.setUser(AuthUtil.getCurrentUser());
 			return;
 		}
 
 		User user = null;
-		if (userSummary.getId() != null) {
-			user = daoFactory.getUserDao().getById(userSummary.getId());
-		} else if (StringUtils.isNotBlank(userSummary.getEmailAddress())) {
-			user = daoFactory.getUserDao().getUserByEmailAddress(userSummary.getEmailAddress());
+		Object key = null;
+		if (inputUser.getId() != null) {
+			user = daoFactory.getUserDao().getById(inputUser.getId());
+			key = inputUser.getId();
+		} else if (StringUtils.isNotBlank(inputUser.getEmailAddress())) {
+			user = daoFactory.getUserDao().getUserByEmailAddress(inputUser.getEmailAddress());
+			key = inputUser.getEmailAddress();
+		} else if (StringUtils.isNotBlank(inputUser.getLoginName()) && StringUtils.isNotBlank(inputUser.getDomain())) {
+			user = daoFactory.getUserDao().getUser(inputUser.getLoginName(), inputUser.getDomain());
+			key = inputUser.getLoginName() + "(" + inputUser.getDomain() + ")";
+		} else {
+			user = AuthUtil.getCurrentUser();
 		}
 
 		if (user == null) {
-			ose.addError(UserErrorCode.NOT_FOUND);
+			ose.addError(UserErrorCode.NOT_FOUND, key);
 			return;
 		}
 
@@ -88,7 +95,7 @@ public class DashboardFactoryImpl implements DashboardFactory {
 	private void setDashlets(DashboardDetail detail, Dashboard dashboard, OpenSpecimenException ose) {
 		List<DashletDetail> dashletDetails = detail.getDashlets();
 		if (CollectionUtils.isEmpty(dashletDetails)) {
-			ose.addError(DashboardErrorCode.NO_DASHLETS_TO_DISPLAY);
+			ose.addError(DashboardErrorCode.NO_DASHLETS);
 			return;
 		}
 
@@ -139,16 +146,19 @@ public class DashboardFactoryImpl implements DashboardFactory {
 	private Dashlet getDashlet(DashletDetail dashletDetail, Dashboard dashboard, OpenSpecimenException ose) {
 		String name = dashletDetail.getName();
 		if (StringUtils.isBlank(name)) {
-			ose.addError(DashboardErrorCode.DASHLET_CFG_NAME_REQ);
+			ose.addError(DashboardErrorCode.DASHLET_NAME_REQ);
 			return null;
 		}
 
 		DashletConfig config = daoFactory.getDashletConfigDao().getByName(name);
 		if (config == null) {
-			ose.addError(DashletConfigErrorCode.NOT_FOUND, name );
+			ose.addError(DashletConfigErrorCode.NOT_FOUND, name);
 			return null;
 		}
 
+		//
+		// TODO: Verification of row/column and height/width values
+		//
 		Dashlet dashlet = new Dashlet();
 		dashlet.setDashboard(dashboard);
 		dashlet.setDashletConfig(config);
@@ -156,8 +166,6 @@ public class DashboardFactoryImpl implements DashboardFactory {
 		dashlet.setWidth(dashletDetail.getWidth());
 		dashlet.setRow(dashletDetail.getRow());
 		dashlet.setColumn(dashletDetail.getColumn());
-
 		return dashlet;
 	}
-
 }

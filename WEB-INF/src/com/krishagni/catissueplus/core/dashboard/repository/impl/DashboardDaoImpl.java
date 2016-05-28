@@ -18,9 +18,6 @@ public class DashboardDaoImpl extends AbstractDao<Dashboard> implements Dashboar
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Dashboard> getDashboards() {
-		Criteria query = getSessionFactory().getCurrentSession()
-			.createCriteria(Dashboard.class, "dashboard");
-
-		return query.list();
+		return getCurrentSession().createCriteria(Dashboard.class, "db").list();
 	}
 }

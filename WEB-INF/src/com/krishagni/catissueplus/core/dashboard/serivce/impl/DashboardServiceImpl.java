@@ -62,7 +62,6 @@ public class DashboardServiceImpl implements DashboardService {
 		try {
 			DashboardDetail detail = req.getPayload();
 			Dashboard dashboard = dashboardFactory.createDashboard(detail);
-
 			daoFactory.getDashboardDao().saveOrUpdate(dashboard);
 			return ResponseEvent.response(DashboardDetail.from(dashboard));
 		} catch (OpenSpecimenException ose) {
@@ -77,13 +76,13 @@ public class DashboardServiceImpl implements DashboardService {
 	public ResponseEvent<DashboardDetail> updateDashboard(RequestEvent<DashboardDetail> req) {
 		try {
 			DashboardDetail detail = req.getPayload();
+
 			Dashboard existing = daoFactory.getDashboardDao().getById(detail.getId());
 			if (existing == null) {
 				return ResponseEvent.userError(DashboardErrorCode.NOT_FOUND, detail.getId());
 			}
 
 			Dashboard dashboard = dashboardFactory.createDashboard(detail);
-
 			existing.update(dashboard);
 			return ResponseEvent.response(DashboardDetail.from(dashboard));
 		} catch (OpenSpecimenException ose) {
