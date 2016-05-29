@@ -885,6 +885,7 @@
   <bean id="dashletCfgSvc" class="com.krishagni.catissueplus.core.dashboard.serivce.impl.DashletConfigServiceImpl">
     <property name="daoFactory" ref="biospecimenDaoFactory"/>
     <property name="dashletCfgFactory" ref="dashletCfgFactory"/>
+    <property name="dataSourceRegistrar" ref="dataSourceRegistrar"/>
   </bean>
 
   <bean id="dashboardFactory" class="com.krishagni.catissueplus.core.dashboard.domain.factory.impl.DashboardFactoryImpl">

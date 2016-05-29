@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
 import com.krishagni.catissueplus.core.dashboard.events.DashletConfigDetail;
+import com.krishagni.catissueplus.core.dashboard.events.DataDetail;
 import com.krishagni.catissueplus.core.dashboard.serivce.DashletConfigService;
 
 @Controller
@@ -57,6 +58,13 @@ public class DashletConfigController {
 
 		cfg.setId(id);
 		return response(dashletCfgSvc.updateConfig(request(cfg)));
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/{id}/data-detail")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public DataDetail getDataDetail(@PathVariable("id") Long id) {
+		return response(dashletCfgSvc.getDataDetail(request(id)));
 	}
 
 	private <T> RequestEvent<T> request(T payload) {

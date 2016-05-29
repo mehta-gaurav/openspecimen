@@ -23,6 +23,7 @@ import com.krishagni.catissueplus.core.dashboard.domain.factory.DashboardErrorCo
 import com.krishagni.catissueplus.core.dashboard.domain.factory.DashboardFactory;
 import com.krishagni.catissueplus.core.dashboard.domain.factory.DashletConfigErrorCode;
 import com.krishagni.catissueplus.core.dashboard.events.DashboardDetail;
+import com.krishagni.catissueplus.core.dashboard.events.DashletConfigDetail;
 import com.krishagni.catissueplus.core.dashboard.events.DashletDetail;
 
 public class DashboardFactoryImpl implements DashboardFactory {
@@ -144,15 +145,8 @@ public class DashboardFactoryImpl implements DashboardFactory {
 	}
 
 	private Dashlet getDashlet(DashletDetail dashletDetail, Dashboard dashboard, OpenSpecimenException ose) {
-		String name = dashletDetail.getName();
-		if (StringUtils.isBlank(name)) {
-			ose.addError(DashboardErrorCode.DASHLET_NAME_REQ);
-			return null;
-		}
-
-		DashletConfig config = daoFactory.getDashletConfigDao().getByName(name);
+		DashletConfig config = getConfig(dashletDetail.getConfig(), ose);
 		if (config == null) {
-			ose.addError(DashletConfigErrorCode.NOT_FOUND, name);
 			return null;
 		}
 
@@ -167,5 +161,28 @@ public class DashboardFactoryImpl implements DashboardFactory {
 		dashlet.setRow(dashletDetail.getRow());
 		dashlet.setColumn(dashletDetail.getColumn());
 		return dashlet;
+	}
+
+	private DashletConfig getConfig(DashletConfigDetail detail, OpenSpecimenException ose) {
+		if (detail == null) {
+			ose.addError(DashboardErrorCode.DASHLET_CFG_REQ);
+			return null;
+		}
+
+		DashletConfig config = null;
+		Object key = null;
+		if (detail.getId() != null) {
+			config = daoFactory.getDashletConfigDao().getById(detail.getId());
+			key = detail.getId();
+		} else if (StringUtils.isNotBlank(detail.getName())) {
+			config = daoFactory.getDashletConfigDao().getByName(detail.getName());
+			key = detail.getName();
+		}
+
+		if (config == null) {
+			ose.addError(DashletConfigErrorCode.NOT_FOUND, key);
+		}
+
+		return config;
 	}
 }

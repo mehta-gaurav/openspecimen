@@ -9,7 +9,7 @@ import com.krishagni.catissueplus.core.dashboard.domain.Dashlet;
 public class DashletDetail {
 	private Long id;
 
-	private String name;
+	private DashletConfigDetail config;
 
 	private Integer height;
 
@@ -27,12 +27,12 @@ public class DashletDetail {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public DashletConfigDetail getConfig() {
+		return config;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setConfig(DashletConfigDetail config) {
+		this.config = config;
 	}
 
 	public Integer getHeight() {
@@ -70,7 +70,7 @@ public class DashletDetail {
 	public static DashletDetail from(Dashlet dashlet) {
 		DashletDetail detail = new DashletDetail();
 		detail.setId(dashlet.getId());
-		detail.setName(dashlet.getDashletConfig().getName());
+		detail.setConfig(DashletConfigDetail.from(dashlet.getDashletConfig()));
 		detail.setHeight(dashlet.getHeight());
 		detail.setWidth(dashlet.getWidth());
 		detail.setRow(dashlet.getRow());

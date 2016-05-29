@@ -82,9 +82,10 @@ public class DashboardServiceImpl implements DashboardService {
 				return ResponseEvent.userError(DashboardErrorCode.NOT_FOUND, detail.getId());
 			}
 
-			Dashboard dashboard = dashboardFactory.createDashboard(detail);
+			Dashboard dashboard = dashboardFactory.createDashboard(existing, detail);
+
 			existing.update(dashboard);
-			return ResponseEvent.response(DashboardDetail.from(dashboard));
+			return ResponseEvent.response(DashboardDetail.from(existing));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
 		} catch (Exception e) {

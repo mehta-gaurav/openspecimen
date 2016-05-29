@@ -7,7 +7,7 @@ public enum DashboardErrorCode implements ErrorCode {
 
 	NO_DASHLETS,
 
-	DASHLET_NAME_REQ;
+	DASHLET_CFG_REQ;
 
 	@Override
 	public String code() {
