@@ -1,0 +1,40 @@
+<div id="dashlet" ng-controller="DashletCtrl">
+  <div class="panel panel-default"> 
+    <div class="panel-heading clearfix">
+      <div class="os-ellipsis" ng-class="{'os-col-75': !popWindow, 'os-col-90': popWindow}">{{dashlet.config.title}}</div>
+      <div class="pull-right">
+        <div class="os-col-25" ng-if="mode == 'normal' && !popWindow">
+          <a ng-click="enlarge(dashlet)">
+            <span class="fa fa-search-plus"></span>
+          </a>
+        </div>
+        <div class="os-col-25" ng-if="mode == 'enlarge' && !popWindow">
+          <a ng-click="normal(dashlet)">
+            <span class="fa fa-search-minus"></span>
+          </a>
+        </div>
+        <div class="os-col-25" ng-if="!popWindow">
+          <a ng-click="popout(dashlet)">
+            <span class="fa fa-expand"></span>
+          </a>
+        </div>
+        <div ng-class="{'os-col-50': !popWindow, 'pull-right': popWindow}">
+          <div class="dropdown">
+            <a class="dropdown-toggle">
+              <span class="fa fa-bar-chart"></span>
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+              <li ng-repeat="chartType in chartTypes | osChartType: dashlet.dataDetail.seriesData">
+                <a href="#" ng-click="changeType(dashlet, chartType)">{{chartType.caption}}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <os-chart chart-detail="dashlet.dataDetail"></os-chart>
+    </div>
+  </div>
+</div>
