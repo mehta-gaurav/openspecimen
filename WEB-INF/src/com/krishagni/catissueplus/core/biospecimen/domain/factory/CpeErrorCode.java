@@ -17,7 +17,9 @@ public enum CpeErrorCode implements ErrorCode {
 	
 	INVALID_CLINICAL_STATUS,	
 	
-	CP_REQUIRED;
+	CP_REQUIRED,
+
+	INVALID_VISIT_NAME_PRINT_MODE;
 
 	@Override
 	public String code() {

@@ -22,7 +22,7 @@ import com.krishagni.catissueplus.core.administrative.domain.Site;
 import com.krishagni.catissueplus.core.administrative.domain.User;
 import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocol.SpecimenLabelAutoPrintMode;
 import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocol.SpecimenLabelPrePrintMode;
-import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocol.VisitNameAutoPrintMode;
+import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocol.VisitNamePrintMode;
 import com.krishagni.catissueplus.core.biospecimen.domain.factory.SpecimenErrorCode;
 import com.krishagni.catissueplus.core.biospecimen.domain.factory.VisitErrorCode;
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
@@ -451,22 +451,21 @@ public class Visit extends BaseExtensionEntity {
 		return Visit.VISIT_STATUS_MISSED.equals(status);
 	}
 	
-	public boolean isPrePrintEnabled() {
-		return getCollectionProtocol().getSpmnLabelPrePrintMode() == SpecimenLabelPrePrintMode.ON_VISIT;
-	}
-
 	public void printLabel(String prevStatus) {
 		if (!shouldPrintLabel(prevStatus)) {
 			return;
 		}
 
-		Integer copies = 1; // get copies by settings;
+		Integer copies = getCpEvent().getVisitNamePrintCopiesToUse();
 		visitSvc.getLabelPrinter().print(Collections.singletonList(PrintItem.make(this, copies)));
 	}
 
-	
+	public boolean isPrePrintSpecimenLabelEnabled() {
+		return getCollectionProtocol().getSpmnLabelPrePrintMode() == SpecimenLabelPrePrintMode.ON_VISIT;
+	}
+
 	public boolean shouldPrePrintSpecimenLabels(String prevStatus) {
-		if (!isPrePrintEnabled()) {
+		if (!isPrePrintSpecimenLabelEnabled()) {
 			return false;
 		}
 		
@@ -478,7 +477,6 @@ public class Visit extends BaseExtensionEntity {
 	}
 	
 	public void prePrintSpecimenLabels(String prevStatus) {
-
 		if (!shouldPrePrintSpecimenLabels(prevStatus)) {
 			return;
 		}
@@ -500,19 +498,6 @@ public class Visit extends BaseExtensionEntity {
 		return "VisitExtension";
 	}
 
-
-	private boolean shouldPrintLabel(String prevStatus) {
-
-		if (!isPrintLableEnabled()) {
-			return false;
-		}
-
-		//
-		// Check whether print label or not by using prevStatus and print mode and settings at cp and event level
-		//
-
-	}
-	
 	private void ensureNoActiveChildObjects() {
 		for (Specimen specimen : getSpecimens()) {
 			if (specimen.isActiveOrClosed() && specimen.isCollected()) {
@@ -588,5 +573,36 @@ public class Visit extends BaseExtensionEntity {
 		}
 		
 		return spmnPrintItems;
+	}
+
+	private boolean shouldPrintLabel(String prevStatus) {
+		if (!isPrintLabelEnabled()) {
+			return false;
+		}
+
+		if (getStatus().equals(VISIT_STATUS_MISSED)) {
+			return false;
+		}
+
+		VisitNamePrintMode printMode = getCpEvent().getVisitNamePrintModeToUse();
+		if (StringUtils.isBlank(prevStatus)) {
+			return getStatus().equals(VISIT_STATUS_COMPLETED) || printMode.equals(VisitNamePrintMode.PRE_PRINT);
+		} else {
+			if (printMode.equals(VisitNamePrintMode.ON_COMPLETION) &&
+				!prevStatus.equals(VISIT_STATUS_COMPLETED) && getStatus().equals(VISIT_STATUS_COMPLETED)) {
+				return true;
+			}
+
+			if (printMode.equals(VisitNamePrintMode.PRE_PRINT) && prevStatus.equals(VISIT_STATUS_MISSED)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean isPrintLabelEnabled() {
+		VisitNamePrintMode visitNamePrintMode = getCpEvent().getVisitNamePrintModeToUse();
+		return !visitNamePrintMode.equals(VisitNamePrintMode.NONE);
 	}
 }

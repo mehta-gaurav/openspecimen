@@ -84,4 +84,28 @@
       </column>
     </addColumn>
   </changeSet>
+
+  <changeSet author="vgaikwad" id="Column to specify visit name print mode at CP level">
+    <addColumn tableName="CATISSUE_COLLECTION_PROTOCOL">
+      <column name="VISIT_NAME_PRINT_MODE" type="${text.type}(32)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="vgaikwad" id="Column to specify number of copies of specimen labels to print at CP level">
+    <addColumn tableName="CATISSUE_COLLECTION_PROTOCOL">
+      <column name="VISIT_NAME_PRINT_COPIES" type="${int.type}"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="vgaikwad" id="Column to specify visit name print mode at event level">
+    <addColumn tableName="CATISSUE_COLL_PROT_EVENT">
+      <column name="VISIT_NAME_PRINT_MODE" type="${text.type}(32)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="vgaikwad" id="Column to specify number of copies of specimen labels to print at event level">
+    <addColumn tableName="CATISSUE_COLL_PROT_EVENT">
+      <column name="VISIT_NAME_PRINT_COPIES" type="${int.type}"/>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>

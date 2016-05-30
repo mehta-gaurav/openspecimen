@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import com.krishagni.catissueplus.core.administrative.domain.Site;
 import com.krishagni.catissueplus.core.administrative.domain.factory.SiteErrorCode;
 import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocol;
+import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocol.VisitNamePrintMode;
 import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocolEvent;
 import com.krishagni.catissueplus.core.biospecimen.domain.factory.CpErrorCode;
 import com.krishagni.catissueplus.core.biospecimen.domain.factory.CpeErrorCode;
@@ -38,19 +39,21 @@ public class CpeFactoryImpl implements CpeFactory {
 		CollectionProtocolEvent cpe = new CollectionProtocolEvent();
 				
 		cpe.setId(detail.getId());
+		cpe.setVisitNamePrintCopies(detail.getVisitNamePrintCopies());
 		setEventLabel(detail, cpe, ose);
 		setEventPoint(detail, cpe, ose);
 		setCode(detail, cpe, ose);
 		setCp(detail, cpe, ose);
 		setDefaultSite(detail, cpe, ose);
-		setActivityStatus(detail, cpe, ose);
 		setClinicalDiagnosis(detail, cpe, ose);
 		setClinicalStatus(detail, cpe, ose);
+		setVisitNamePrintMode(detail, cpe, ose);
+		setActivityStatus(detail, cpe, ose);
 		
 		ose.checkAndThrow();
 		return cpe;
 	}
-	
+
 	@Override
 	public CollectionProtocolEvent createCpeCopy(CollectionProtocolEventDetail detail, CollectionProtocolEvent existing) {
 		OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
@@ -85,13 +88,23 @@ public class CpeFactoryImpl implements CpeFactory {
 		} else {
 			cpe.setClinicalStatus(existing.getClinicalStatus());
 		}
-		
+
+		if (StringUtils.isNotBlank(detail.getVisitNamePrintMode())) {
+			setVisitNamePrintMode(detail, cpe, ose);
+		} else {
+			cpe.setVisitNamePrintMode(existing.getVisitNamePrintMode());
+		}
+
+		Integer printCopies = detail.getVisitNamePrintCopies() != null ? detail.getVisitNamePrintCopies() :
+			existing.getVisitNamePrintCopies();
+		cpe.setVisitNamePrintCopies(printCopies);
+
 		if (StringUtils.isNotBlank(detail.getActivityStatus())) {
 			setActivityStatus(detail, cpe, ose);
 		} else {
 			cpe.setActivityStatus(existing.getActivityStatus());
 		}
-		
+
 		ose.checkAndThrow();		
 		return cpe;
 	}
@@ -186,4 +199,21 @@ public class CpeFactoryImpl implements CpeFactory {
 		
 		cpe.setClinicalStatus(clinicalStatus);
 	}
+
+	private void setVisitNamePrintMode(CollectionProtocolEventDetail detail, CollectionProtocolEvent cpe, OpenSpecimenException ose) {
+		if (detail.getVisitNamePrintMode() == null) {
+			return;
+		}
+
+		VisitNamePrintMode visitNamePrintMode = null;
+		try {
+			visitNamePrintMode = VisitNamePrintMode.valueOf(detail.getVisitNamePrintMode());
+		} catch (IllegalArgumentException iae) {
+			ose.addError(CpeErrorCode.INVALID_VISIT_NAME_PRINT_MODE, detail.getVisitNamePrintMode());
+			return;
+		}
+
+		cpe.setVisitNamePrintMode(visitNamePrintMode);
+	}
+
 }

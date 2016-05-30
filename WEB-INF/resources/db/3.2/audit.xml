@@ -16,5 +16,53 @@
       <column name="manageForms_MOD" type="${bit.type}"/>
     </addColumn>
   </changeSet>
+
+  <changeSet author="vgaikwad" id="Audit visit name print mode specified at CP level">
+    <addColumn tableName="CAT_COLLECTION_PROTOCOL_AUD">
+      <column name="VISIT_NAME_PRINT_MODE" type="${text.type}(32)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="vgaikwad" id="Track changes of visit name print mode specified at CP level">
+    <addColumn tableName="CAT_COLLECTION_PROTOCOL_AUD">
+      <column name="visitNamePrintMode_MOD" type="${bit.type}"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="vgaikwad" id="Audit number of copies of visit name to print specified at CP level">
+    <addColumn tableName="CAT_COLLECTION_PROTOCOL_AUD">
+      <column name="VISIT_NAME_PRINT_COPIES" type="${int.type}"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="vgaikwad" id="Track changes of number of copies of visit name to print specified at CP level">
+    <addColumn tableName="CAT_COLLECTION_PROTOCOL_AUD">
+      <column name="visitNamePrintCopies_MOD" type="${bit.type}"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="vgaikwad" id="Audit visit name print mode specified at event level">
+    <addColumn tableName="CATISSUE_COLL_PROT_EVENT_AUD">
+      <column name="VISIT_NAME_PRINT_MODE" type="${text.type}(32)"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="vgaikwad" id="Track changes of visit name print mode specified at event level">
+    <addColumn tableName="CATISSUE_COLL_PROT_EVENT_AUD">
+      <column name="visitNamePrintMode_MOD" type="${bit.type}"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="vgaikwad" id="Audit number of copies of visit name to print specified at event level">
+    <addColumn tableName="CATISSUE_COLL_PROT_EVENT_AUD">
+      <column name="VISIT_NAME_PRINT_COPIES" type="${int.type}"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="vgaikwad" id="Track changes of number of copies of visit name to print specified at event level">
+    <addColumn tableName="CATISSUE_COLL_PROT_EVENT_AUD">
+      <column name="visitNamePrintCopies_MOD" type="${bit.type}"/>
+    </addColumn>
+  </changeSet>
   
  </databaseChangeLog> 

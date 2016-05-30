@@ -255,6 +255,8 @@ public class CollectionProtocolDetail extends CollectionProtocolSummary {
 		result.setManualPpidEnabled(cp.isManualPpidEnabled());
 		result.setManualVisitNameEnabled(cp.isManualVisitNameEnabled());
 		result.setManualSpecLabelEnabled(cp.isManualSpecLabelEnabled());
+		result.setVisitNamePrintMode(cp.getVisitNamePrintMode().name());
+		result.setVisitNamePrintCopies(cp.getVisitNamePrintCopies());
 		result.setSpmnLabelPrePrintMode(cp.getSpmnLabelPrePrintMode().name());
 		result.setSpmnLabelPrintSettings(CpSpecimenLabelPrintSettingDetail.from(cp.getSpmnLabelPrintSettings()));
 		result.setActivityStatus(cp.getActivityStatus());
