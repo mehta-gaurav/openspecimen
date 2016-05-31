@@ -1,7 +1,7 @@
 package com.krishagni.catissueplus.core.dashboard.domain;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,7 +11,7 @@ import com.krishagni.catissueplus.core.biospecimen.domain.BaseEntity;
 public class Dashboard extends BaseEntity {
 	private User user;
 
-	private Set<Dashlet> dashlets = new HashSet<>();
+	private Set<Dashlet> dashlets = new LinkedHashSet<>();
 
 	private String activityStatus;
 

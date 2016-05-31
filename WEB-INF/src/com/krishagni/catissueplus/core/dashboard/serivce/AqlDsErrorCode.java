@@ -21,7 +21,7 @@ public enum AqlDsErrorCode implements ErrorCode {
 
 	METRIC_TITLE_REQ,
 
-	NON_NUMERIC_DATA;
+	NON_NUM_METRIC_VALUE;
 
 	@Override
 	public String code() {

@@ -15,7 +15,9 @@ public enum DashletConfigErrorCode implements ErrorCode {
 
 	DS_TYPE_REQ,
 
-	INVALID_DS_TYPE;
+	INVALID_DS_TYPE,
+
+	NAME_OR_ID_REQ;
 
 	@Override
 	public String code() {

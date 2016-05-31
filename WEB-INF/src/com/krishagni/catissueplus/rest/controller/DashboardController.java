@@ -9,12 +9,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
 import com.krishagni.catissueplus.core.dashboard.events.DashboardDetail;
+import com.krishagni.catissueplus.core.dashboard.events.DashletData;
+import com.krishagni.catissueplus.core.dashboard.events.GetDashletDataOp;
 import com.krishagni.catissueplus.core.dashboard.serivce.DashboardService;
 
 @Controller
@@ -57,6 +60,22 @@ public class DashboardController {
 
 		detail.setId(id);
 		return response(dashboardSvc.updateDashboard(request(detail)));
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/{id}/data")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public DashletData getDashletData(
+		@PathVariable("id")
+		Long id,
+
+		@RequestParam(value = "dashlet", required = true)
+		String dashletName) {
+
+		GetDashletDataOp op = new GetDashletDataOp();
+		op.setDashboardId(id);
+		op.setDashletName(dashletName);
+		return response(dashboardSvc.getData(request(op)));
 	}
 
 	private <T> RequestEvent<T> request(T payload) {

@@ -1,8 +1,6 @@
 package com.krishagni.catissueplus.core.dashboard.serivce.impl;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.PlusTransactional;
@@ -10,21 +8,16 @@ import com.krishagni.catissueplus.core.common.errors.ErrorType;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
-import com.krishagni.catissueplus.core.common.util.Utility;
 import com.krishagni.catissueplus.core.dashboard.domain.DashletConfig;
 import com.krishagni.catissueplus.core.dashboard.domain.factory.DashletConfigErrorCode;
 import com.krishagni.catissueplus.core.dashboard.domain.factory.DashletConfigFactory;
 import com.krishagni.catissueplus.core.dashboard.events.DashletConfigDetail;
-import com.krishagni.catissueplus.core.dashboard.events.DataDetail;
 import com.krishagni.catissueplus.core.dashboard.serivce.DashletConfigService;
-import com.krishagni.catissueplus.core.dashboard.serivce.DataSourceRegistrar;
 
 public class DashletConfigServiceImpl implements DashletConfigService {
 	private DaoFactory daoFactory;
 
 	private DashletConfigFactory dashletCfgFactory;
-
-	private DataSourceRegistrar dataSourceRegistrar;
 
 	public void setDaoFactory(DaoFactory daoFactory) {
 		this.daoFactory = daoFactory;
@@ -32,10 +25,6 @@ public class DashletConfigServiceImpl implements DashletConfigService {
 
 	public void setDashletCfgFactory(DashletConfigFactory dashletCfgFactory) {
 		this.dashletCfgFactory = dashletCfgFactory;
-	}
-
-	public void setDataSourceRegistrar(DataSourceRegistrar dataSourceRegistrar) {
-		this.dataSourceRegistrar = dataSourceRegistrar;
 	}
 
 	@Override
@@ -121,38 +110,6 @@ public class DashletConfigServiceImpl implements DashletConfigService {
 	public ResponseEvent<DashletConfigDetail> deleteConfig(RequestEvent<DashletConfigDetail> req) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	@PlusTransactional
-	public ResponseEvent<DataDetail> getDataDetail(RequestEvent<Long> req) {
-		try {
-			DashletConfig config = daoFactory.getDashletConfigDao().getById(req.getPayload());
-			if (config == null) {
-				return ResponseEvent.userError(DashletConfigErrorCode.NOT_FOUND, req.getPayload());
-			}
-
-			Map<String, Object> dataSource = Utility.jsonToMap(config.getDataSource());
-			String type = (String) dataSource.get("type");
-
-			Map<String, Object> options = (Map<String, Object>) dataSource.get("options");
-			if (options == null) {
-				options = Collections.emptyMap();
-			}
-
-			Map<String, Object> chartOpts = (Map<String, Object>) dataSource.get("chartOpts");
-			if (chartOpts == null) {
-				chartOpts = Collections.emptyMap();
-			}
-
-			DataDetail dataDetail = dataSourceRegistrar.getFactory(type).createDataSource(options).execute(chartOpts);
-			return ResponseEvent.response(dataDetail);
-		} catch (OpenSpecimenException ose) {
-			return ResponseEvent.error(ose);
-		} catch (Exception e) {
-			return ResponseEvent.serverError(e);
-		}
 	}
 
 	private void ensureUniqueName(DashletConfig existing, DashletConfig newCfg, OpenSpecimenException ose) {

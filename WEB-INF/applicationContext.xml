@@ -885,7 +885,6 @@
   <bean id="dashletCfgSvc" class="com.krishagni.catissueplus.core.dashboard.serivce.impl.DashletConfigServiceImpl">
     <property name="daoFactory" ref="biospecimenDaoFactory"/>
     <property name="dashletCfgFactory" ref="dashletCfgFactory"/>
-    <property name="dataSourceRegistrar" ref="dataSourceRegistrar"/>
   </bean>
 
   <bean id="dashboardFactory" class="com.krishagni.catissueplus.core.dashboard.domain.factory.impl.DashboardFactoryImpl">
@@ -895,6 +894,7 @@
   <bean id="dashboardSvc" class="com.krishagni.catissueplus.core.dashboard.serivce.impl.DashboardServiceImpl">
     <property name="daoFactory" ref="biospecimenDaoFactory"/>
     <property name="dashboardFactory" ref="dashboardFactory"/>
+    <property name="dataSourceRegistrar" ref="dataSourceRegistrar"/>
   </bean>
 
   <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">  

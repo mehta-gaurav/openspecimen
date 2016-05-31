@@ -1,10 +1,11 @@
 package com.krishagni.catissueplus.core.dashboard.serivce.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
-import com.krishagni.catissueplus.core.dashboard.events.DataDetail;
+import com.krishagni.catissueplus.core.dashboard.events.DashletData;
 import com.krishagni.catissueplus.core.dashboard.serivce.AqlDsErrorCode;
 import com.krishagni.catissueplus.core.dashboard.serivce.DataSource;
 import com.krishagni.catissueplus.core.de.events.ExecuteQueryEventOp;
@@ -98,110 +99,119 @@ public class AqlDataSource implements DataSource {
 	}
 
 	@Override
-	public DataDetail execute(Map<String, Object> input) {
-		ExecuteQueryEventOp op = createExecuteQueryEventOp();
-		RequestEvent<ExecuteQueryEventOp> queryReq = new RequestEvent<ExecuteQueryEventOp>(op);
-		ResponseEvent<QueryExecResult> resp = querySvc.executeQuery(queryReq);
-		resp.throwErrorIfUnsuccessful();
-
-		QueryExecResult result = resp.getPayload();
-		return (series == null || series.isEmpty()) ? getSimpleData(result) : getComboData(result);
+	public DashletData execute(Map<String, Object> input) {
+		QueryExecResult rawData = getRawData(input);
+		return getDashletData(rawData);
 	}
 
-	private ExecuteQueryEventOp createExecuteQueryEventOp() {
+	private QueryExecResult getRawData(Map<String, Object> input) {
+		Long cpId = (Long)input.get("cpId");
+		if (cpId == null) {
+			cpId = -1L;
+		}
+
 		ExecuteQueryEventOp op = new ExecuteQueryEventOp();
-		op.setCpId(-1L);
+		op.setCpId(cpId);
 		op.setDrivingForm("Participant");
 		op.setRunType("Data");
 		op.setAql(getAql());
-		op.setIndexOf("Specimen.label");
-		op.setWideRowMode("DEEP");
 
-		return op;
+		RequestEvent<ExecuteQueryEventOp> req = new RequestEvent<>(op);
+		ResponseEvent<QueryExecResult> resp = querySvc.executeQuery(req);
+		resp.throwErrorIfUnsuccessful();
+		return resp.getPayload();
 	}
-
-	private DataDetail getSimpleData(QueryExecResult result) {
-        try {
-                List<Number> data = new ArrayList<>();
-                List<String> categories = new ArrayList<>();
-
-                Iterator<String[]> rowItr = result.getRows().iterator();
-                while (rowItr.hasNext()) {
-                        String[] row = rowItr.next();
-                        data.add(Long.valueOf(row[0]));
-                        categories.add(row[1]);
-                }
-
-                DataDetail detail = new DataDetail();
-                detail.setSeriesData(Collections.singletonMap(metric.getTitle(), data));
-                detail.setCategories(categories);
-
-                return detail;
-        } catch (NumberFormatException ex) {
-        	throw OpenSpecimenException.userError(AqlDsErrorCode.NON_NUMERIC_DATA);
-        }
-	}
-
-	@SuppressWarnings("unchecked")
-    private DataDetail getComboData(QueryExecResult result) {
-            try {
-                    List<String> series = Arrays.asList(result.getColumnLabels());
-                    /*
-                     * First column is header of label column, Last column is total,
-                     * So removing this columns
-                     */
-                    series = series.subList(1, series.size() - 1);
-
-                    List<String> categories = new ArrayList<>();
-                    List<List<Number>> data = new ArrayList<>();
-                    for (int i = 0; i < series.size(); i++) {
-                            data.add(new ArrayList<>());
-                    }
-
-                    Iterator<String[]> rowIterator = result.getRows().iterator();
-
-                    //First row contains grant total, so removing it
-                    String[] row = rowIterator.hasNext() ? rowIterator.next() : null;
-
-                    while (rowIterator.hasNext()) {
-                            int j = 0;
-                            row = rowIterator.next();
-
-                            //First column contain label
-                            categories.add(row[j++]);
-                            for (int i = 0; i < series.size(); i++) {
-                                    data.get(i).add(Long.valueOf(row[j++]));
-                            }
-                    }
-
-                    Map<String, List<Number>> seriesData = new HashMap<>();
-                    for (int idx = 0; idx < series.size(); idx++) {
-                        seriesData.put(series.get(idx), data.get(idx));
-                    }
-
-                    DataDetail detail = new DataDetail();
-                    detail.setCategories(categories);
-                    detail.setSeriesData(seriesData);
-
-                    return detail;
-            } catch (NumberFormatException ex) {
-                    throw OpenSpecimenException.userError(AqlDsErrorCode.NON_NUMERIC_DATA);
-            }
-    }
 
 	private String getAql() {
-		StringBuilder selectList = null;
-		if (series == null || series.isEmpty()) {
-			selectList = new StringBuilder(metric.toString()).append(", ").append(category.toString());
-		} else {
-			selectList = new StringBuilder(metric.toString()).append(", ")
-					.append(series.toString()).append(", ")
-					.append(category.toString());
+		StringBuilder selectList = new StringBuilder(category.toString());
+		StringBuilder crosstabExpr = new StringBuilder();
+
+		if (series != null && !series.isEmpty()) {
+			selectList.append(", ").append(series.toString());
+			crosstabExpr.append("crosstab((1), 2, (3)");
 		}
 
-		String rptExpr = series == null || series.isEmpty() ? "" : " crosstab((3), 2, (1) )";
+		selectList.append(metric.toString());
 
-		return "select " + selectList + " where " + criteria + " limit 0, 10000 " + rptExpr;
+		return new StringBuilder()
+			.append("select ").append(selectList).append(" ")
+			.append("where ").append(criteria).append(" ")
+			.append(crosstabExpr)
+			.toString();
 	}
 
+	private DashletData getDashletData(QueryExecResult rawData) {
+		if (series == null || series.isEmpty()) {
+			return transformSimpleTabToDashletData(rawData);
+		} else {
+			return transformCrossTabToDashletData(rawData);
+		}
+	}
+
+	private DashletData transformSimpleTabToDashletData(QueryExecResult rawData) {
+		try {
+			List<Number> values = new ArrayList<>();
+			List<String> categories = new ArrayList<>();
+
+			Iterator<String[]> rowIter = rawData.getRows().iterator();
+			while (rowIter.hasNext()) {
+				String[] row = rowIter.next();
+				categories.add(row[0]);
+				values.add(new BigDecimal(row[1]));
+			}
+
+			DashletData data = new DashletData();
+			data.setCategories(categories);
+			data.setSeriesData(Collections.singletonMap(metric.getTitle(), values));
+			return data;
+		} catch (NumberFormatException nfe) {
+			throw OpenSpecimenException.userError(AqlDsErrorCode.NON_NUM_METRIC_VALUE, nfe.getMessage());
+		}
+	}
+
+	private DashletData transformCrossTabToDashletData(QueryExecResult result) {
+		try {
+			//
+			// first and last element are category label and total header respectively
+			// between these 2 elements are series labels
+			//
+			List<String> seriesLabels = Arrays.asList(result.getColumnLabels());
+			seriesLabels = seriesLabels.subList(1, seriesLabels.size() - 1);
+
+			List<String> categories = new ArrayList<>();
+			Map<String, List<Number>> seriesData = new LinkedHashMap<>();
+
+			Iterator<String[]> rowIter = result.getRows().iterator();
+			if (rowIter.hasNext()) {
+				rowIter.next();
+			}
+
+			while (rowIter.hasNext()) {
+				int columnIdx = 0;
+				String[] row = rowIter.next();
+
+				//
+				// First column of each row contains category name/label
+				//
+				categories.add(row[columnIdx++]);
+
+				for (String seriesLabel : seriesLabels) {
+					List<Number> values = seriesData.get(seriesLabel);
+					if (values == null) {
+						values = new ArrayList<>();
+						seriesData.put(seriesLabel, values);
+					}
+
+					values.add(new BigDecimal(row[columnIdx++]));
+				}
+			}
+
+			DashletData data = new DashletData();
+			data.setCategories(categories);
+			data.setSeriesData(seriesData);
+			return data;
+		} catch (NumberFormatException nfe) {
+			throw OpenSpecimenException.userError(AqlDsErrorCode.NON_NUM_METRIC_VALUE, nfe.getMessage());
+		}
+	}
 }

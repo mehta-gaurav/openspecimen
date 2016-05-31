@@ -3,7 +3,7 @@ package com.krishagni.catissueplus.core.dashboard.events;
 import java.util.List;
 import java.util.Map;
 
-public class DataDetail {
+public class DashletData {
 	private List<String> categories;
 
 	private Map<String, List<Number>> seriesData;

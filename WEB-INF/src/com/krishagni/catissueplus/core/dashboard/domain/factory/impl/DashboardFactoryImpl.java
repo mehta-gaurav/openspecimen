@@ -164,8 +164,8 @@ public class DashboardFactoryImpl implements DashboardFactory {
 	}
 
 	private DashletConfig getConfig(DashletConfigDetail detail, OpenSpecimenException ose) {
-		if (detail == null) {
-			ose.addError(DashboardErrorCode.DASHLET_CFG_REQ);
+		if (detail == null || (detail.getId() == null && StringUtils.isBlank(detail.getName()))) {
+			ose.addError(DashletConfigErrorCode.NAME_OR_ID_REQ);
 			return null;
 		}
 
@@ -174,7 +174,7 @@ public class DashboardFactoryImpl implements DashboardFactory {
 		if (detail.getId() != null) {
 			config = daoFactory.getDashletConfigDao().getById(detail.getId());
 			key = detail.getId();
-		} else if (StringUtils.isNotBlank(detail.getName())) {
+		} else {
 			config = daoFactory.getDashletConfigDao().getByName(detail.getName());
 			key = detail.getName();
 		}
