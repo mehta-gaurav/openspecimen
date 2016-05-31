@@ -54,6 +54,8 @@ public enum CpErrorCode implements ErrorCode {
 	CONSENTS_WAIVED,
 	
 	DUP_CP_SITE_CODES,
+
+	INVALID_VISIT_NAME_PRINT_MODE,
 	
 	INVALID_SPMN_LABEL_PRE_PRINT_MODE,
 	
@@ -63,7 +65,11 @@ public enum CpErrorCode implements ErrorCode {
 	
 	INVALID_SPMN_LABEL_PRINT_MODE,
 	
-	DUP_PRINT_SETTING;
+	DUP_PRINT_SETTING,
+
+	CANNOT_MERGE_FMT_DIFFERS,
+	
+	REF_ENTITY_FOUND;
 	
 	@Override
 	public String code() {

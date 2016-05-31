@@ -240,7 +240,7 @@ public class Utility {
 		cal.set(Calendar.MILLISECOND, 0);
 		return cal.getTime();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static <T> T collect(Collection<?> collection, String propertyName, boolean returnSet) {
 		Collection<?> result = CollectionUtils.collect(collection, new BeanToPropertyValueTransformer(propertyName));
@@ -289,6 +289,20 @@ public class Utility {
 		
 		return DateUtils.truncate(date, Calendar.DATE);
 	}
+
+	public static Date getEndOfDay (Date date) {
+		if (date == null) {
+			return null;
+		}
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		cal.set(Calendar.MILLISECOND, 999);
+		return cal.getTime();
+	}
 	
 	public static char getFieldSeparator() {
 		return ConfigUtil.getInstance().getCharSetting("common", "field_separator", CSVWriter.DEFAULT_SEPARATOR); 
@@ -314,5 +328,14 @@ public class Utility {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static boolean isQuoted(String input) {
+		if (StringUtils.isBlank(input) || input.length() < 2) {
+			return false;
+		}
+
+		return (input.charAt(0) == '"' && input.charAt(input.length() - 1) == '"') ||
+				(input.charAt(0) == '\'' && input.charAt(input.length() - 1) == '\'');
 	}
 }

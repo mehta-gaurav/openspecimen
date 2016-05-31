@@ -20,6 +20,8 @@ import com.krishagni.catissueplus.core.biospecimen.domain.Visit;
 import com.krishagni.catissueplus.core.biospecimen.domain.factory.VisitErrorCode;
 import com.krishagni.catissueplus.core.biospecimen.domain.factory.VisitFactory;
 import com.krishagni.catissueplus.core.biospecimen.events.FileDetail;
+import com.krishagni.catissueplus.core.biospecimen.events.LabelPrintJobSummary;
+import com.krishagni.catissueplus.core.biospecimen.events.PrintVisitNameDetail;
 import com.krishagni.catissueplus.core.biospecimen.events.SpecimenDetail;
 import com.krishagni.catissueplus.core.biospecimen.events.SprDetail;
 import com.krishagni.catissueplus.core.biospecimen.events.SprFileDownloadDetail;
@@ -37,6 +39,8 @@ import com.krishagni.catissueplus.core.common.OpenSpecimenAppCtxProvider;
 import com.krishagni.catissueplus.core.common.Pair;
 import com.krishagni.catissueplus.core.common.PlusTransactional;
 import com.krishagni.catissueplus.core.common.access.AccessCtrlMgr;
+import com.krishagni.catissueplus.core.common.domain.LabelPrintJob;
+import com.krishagni.catissueplus.core.common.domain.PrintItem;
 import com.krishagni.catissueplus.core.common.errors.ErrorType;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.DependentEntityDetail;
@@ -408,7 +412,30 @@ public class VisitServiceImpl implements VisitService, ObjectStateParamsResolver
 		return (LabelPrinter<Visit>)OpenSpecimenAppCtxProvider.getAppCtx().getBean(beanName);
 	}
 
+	@PlusTransactional
+	@Override
+	public ResponseEvent<LabelPrintJobSummary> printVisitNames(RequestEvent<PrintVisitNameDetail> req) {
+		PrintVisitNameDetail printDetail = req.getPayload();
 
+		LabelPrinter<Visit> printer = getLabelPrinter();
+		if (printer == null) {
+			return ResponseEvent.serverError(VisitErrorCode.NO_PRINTER_CONFIGURED);
+		}
+
+		List<Visit> visits = getVisitsToPrint(printDetail);
+		if (CollectionUtils.isEmpty(visits)) {
+			List<?> input = CollectionUtils.isNotEmpty(printDetail.getVisitIds()) ? printDetail.getVisitIds() :
+					printDetail.getVisitNames();
+			return ResponseEvent.userError(VisitErrorCode.NO_VISITS_TO_PRINT, input);
+		}
+
+		LabelPrintJob job = printer.print(PrintItem.make(visits, printDetail.getCopies()));
+		if (job == null) {
+			return ResponseEvent.userError(VisitErrorCode.PRINT_ERROR);
+		}
+
+		return ResponseEvent.response(LabelPrintJobSummary.from(job));
+	}
 
 	@PlusTransactional
 	@Override
@@ -491,7 +518,8 @@ public class VisitServiceImpl implements VisitService, ObjectStateParamsResolver
 		existing.setNameIfEmpty();
 		daoFactory.getVisitsDao().saveOrUpdate(existing);
 		existing.addOrUpdateExtension();
-		existing.prePrintLabels(prevStatus);
+		existing.printLabel(prevStatus);
+		existing.prePrintSpecimenLabels(prevStatus);
 		return VisitDetail.from(existing, false, false);
 	}
 	
@@ -652,6 +680,9 @@ public class VisitServiceImpl implements VisitService, ObjectStateParamsResolver
 				}
 
 				specimenDetail.setId(specimen.getId());
+				if (StringUtils.isBlank(specimenDetail.getLabel())) {
+					specimenDetail.setLabel(specimen.getLabel());
+				}
 			}
 
 			if (CollectionUtils.isNotEmpty(specimenDetail.getSpecimensPool())) {
@@ -662,5 +693,16 @@ public class VisitServiceImpl implements VisitService, ObjectStateParamsResolver
 				setSpecimenIds(specimenDetail.getChildren(), reqSpecimenMap);
 			}
 		}
+	}
+
+	private List<Visit> getVisitsToPrint(PrintVisitNameDetail printDetail) {
+		List<Visit> visits = null;
+		if (CollectionUtils.isNotEmpty(printDetail.getVisitIds())) {
+			visits = daoFactory.getVisitsDao().getByIds(printDetail.getVisitIds());
+		} else if (CollectionUtils.isNotEmpty(printDetail.getVisitNames())) {
+			visits = daoFactory.getVisitsDao().getByName(printDetail.getVisitNames());
+		}
+
+		return visits;
 	}
 }

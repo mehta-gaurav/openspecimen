@@ -530,7 +530,6 @@
     "create_aliquots": "Create Aliquots",
     "specimen_type": "Specimen Type",
     "anatomic_site": "Anatomic Site",
-    "freeze_thaw_cycle_lt_parent": "Child specimen's freeze/thaw cycle count can not be less than that of parent specimen",
 
     "col_event": {
       "title": "Collection Details",
@@ -827,6 +826,7 @@
     "department": "Department",
     "address": "Address",
     "super_admin": "Super Administrator",
+    "manage_forms": "Manage Forms?",
     "login_details": "Login Details",
     "permissions": "Permissions",
     "login_name": "Login Name",
@@ -985,6 +985,7 @@
     "creating_hierarchy": "Create Hierarchy?",
     "num_of_containers": "Number of Containers",
     "hierarchy_created_successfully": "Container hierarchy of type {{typeName}} created successfully.",
+    "creation_success": "Container {{name}} successfully created.",
 
     "tooltip": {
       "view_details": "Click to view Container details",
@@ -1148,7 +1149,10 @@
     "confirm_delete": "{{entityType}} {{entityName}} will be deleted forever. Are you sure you want to proceed?",
     "entity_deleted": "{{entityType}} {{entityName}} deleted successfully.",
     "dependents_title": "Error: Cannot delete {{entityName}}",
-    "dependents_details": "Cannot delete {{entityType}} {{entityName}} because of following dependent objects"
+    "dependents_details": "Cannot delete {{entityType}} {{entityName}} because of following dependent objects",
+    "force_delete": "Type 'DELETE ANYWAY' in below textbox to delete CP including its dependent entities.",
+    "delete_anyway": "DELETE ANYWAY",
+    "delete_pending": "{{entityType}} {{entityName}} deletion taking longer time than anticipated. You'll receive an email when it gets completed"
   },
 
   "queries": {
@@ -1357,6 +1361,8 @@
   },
 
   "bulk_imports": {
+    "no_jobs": "No bulk imports jobs to show.",
+
     "job_submitted": "Bulk Import Job {{id}} Submitted",
     "select_extn": "Select Form",
     "input_file": "Input Records File",
@@ -1704,7 +1710,9 @@
         "token_inactive_interval": "Session Timeout Limit (minutes)",
         "token_inactive_interval_desc": "Minutes of inactiveness after which a user is automatically logged out.",
         "verify_token_ip_address": "IP Address Validation",
-        "verify_token_ip_address_desc": "Check whether requests are made from the same IP address to which the login token was issued."
+        "verify_token_ip_address_desc": "Check whether requests are made from the same IP address to which the login token was issued.",
+        "saml_enable": "Enable SAML authentication",
+        "saml_enable_desc": "Enable single sign on using SAML based identity provider"
       },
       
       "administrative": {

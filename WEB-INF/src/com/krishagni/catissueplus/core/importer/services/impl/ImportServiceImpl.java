@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
@@ -40,12 +41,14 @@ import com.krishagni.catissueplus.core.importer.domain.ImportJob.Status;
 import com.krishagni.catissueplus.core.importer.domain.ImportJob.Type;
 import com.krishagni.catissueplus.core.importer.domain.ImportJobErrorCode;
 import com.krishagni.catissueplus.core.importer.domain.ObjectSchema;
+import com.krishagni.catissueplus.core.importer.events.FileRecordsDetail;
 import com.krishagni.catissueplus.core.importer.events.ImportDetail;
 import com.krishagni.catissueplus.core.importer.events.ImportJobDetail;
 import com.krishagni.catissueplus.core.importer.events.ImportObjectDetail;
 import com.krishagni.catissueplus.core.importer.events.ObjectSchemaCriteria;
 import com.krishagni.catissueplus.core.importer.repository.ImportJobDao;
 import com.krishagni.catissueplus.core.importer.repository.ListImportJobsCriteria;
+import com.krishagni.catissueplus.core.importer.services.ImportListener;
 import com.krishagni.catissueplus.core.importer.services.ImportService;
 import com.krishagni.catissueplus.core.importer.services.ObjectImporter;
 import com.krishagni.catissueplus.core.importer.services.ObjectImporterFactory;
@@ -56,7 +59,7 @@ import edu.common.dynamicextensions.query.cachestore.LinkedEhCacheMap;
 
 public class ImportServiceImpl implements ImportService {
 	private ConfigurationService cfgSvc;
-	
+
 	private ImportJobDao importJobDao;
 	
 	private ThreadPoolTaskExecutor taskExecutor;
@@ -66,13 +69,13 @@ public class ImportServiceImpl implements ImportService {
 	private ObjectImporterFactory importerFactory;
 	
 	private PlatformTransactionManager transactionManager;
-	
+
 	private TransactionTemplate txTmpl;
 	
 	public void setCfgSvc(ConfigurationService cfgSvc) {
 		this.cfgSvc = cfgSvc;
 	}
-	
+
 	public void setImportJobDao(ImportJobDao importJobDao) {
 		this.importJobDao = importJobDao;
 	}
@@ -88,7 +91,7 @@ public class ImportServiceImpl implements ImportService {
 	public void setImporterFactory(ObjectImporterFactory importerFactory) {
 		this.importerFactory = importerFactory;
 	}
-	
+
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
 		this.txTmpl = new TransactionTemplate(this.transactionManager);
@@ -188,7 +191,7 @@ public class ImportServiceImpl implements ImportService {
 			createJobDir(job.getId());
 			moveToJobDir(inputFile, job.getId());
 			
-			taskExecutor.submit(new ImporterTask(AuthUtil.getAuth(), job));
+			taskExecutor.submit(new ImporterTask(AuthUtil.getAuth(), job, detail.getListener()));
 			return ResponseEvent.response(ImportJobDetail.from(job));
 		} catch (Exception e) {
 			return ResponseEvent.serverError(e);			
@@ -209,8 +212,45 @@ public class ImportServiceImpl implements ImportService {
 			return ResponseEvent.serverError(e);
 		}
 	}
-	
-	
+
+	@Override
+	public ResponseEvent<List<Map<String, Object>>> processFileRecords(RequestEvent<FileRecordsDetail> req) {
+		ObjectReader reader = null;
+		File file = null;
+
+		try {
+			FileRecordsDetail detail = req.getPayload();
+
+			ObjectSchema.Record schemaRec = new ObjectSchema.Record();
+			schemaRec.setFields(detail.getFields());
+
+			ObjectSchema schema = new ObjectSchema();
+			schema.setRecord(schemaRec);
+
+			file = new File(getFilePath(detail.getFileId()));
+			reader = new ObjectReader(
+				file.getAbsolutePath(),
+				schema,
+				ConfigUtil.getInstance().getDeDateFmt(),
+				ConfigUtil.getInstance().getTimeFmt());
+
+			List<Map<String, Object>> records = new ArrayList<>();
+			Map<String, Object> record = null;
+			while ((record = (Map<String, Object>)reader.next()) != null) {
+				records.add(record);
+			}
+
+			return ResponseEvent.response(records);
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
+		} finally {
+			IOUtils.closeQuietly(reader);
+			if (file != null) {
+				file.delete();
+			}
+		}
+	}
+
 	private ImportJob getImportJob(Long jobId) {
 		User currentUser = AuthUtil.getCurrentUser();
 		
@@ -280,10 +320,13 @@ public class ImportServiceImpl implements ImportService {
 		private Authentication auth;
 		
 		private ImportJob job;
+
+		private ImportListener callback;
 		
-		public ImporterTask(Authentication auth, ImportJob job) {
+		public ImporterTask(Authentication auth, ImportJob job, ImportListener callback) {
 			this.auth = auth;
-			this.job = job;			
+			this.job = job;
+			this.callback = callback;
 		}
 
 		@Override
@@ -314,12 +357,15 @@ public class ImportServiceImpl implements ImportService {
 				} else {
 					processSingleRowPerObj(objReader, csvWriter, importer);
 				}
+
+				success();
 			} catch (Exception e) {
 				e.printStackTrace();
 				saveJob(totalRecords, failedRecords, Status.FAILED);
+				failed(e);
 			} finally {
 				IOUtils.closeQuietly(objReader);
-				closeQueitly(csvWriter);
+				closeQuietly(csvWriter);
 			}
 		}
 		
@@ -429,7 +475,7 @@ public class ImportServiceImpl implements ImportService {
 			saveJob(totalRecords, failedRecords, Status.COMPLETED);
 		}
 		
-		private String importObject(final ObjectImporter<Object, Object> importer, Object object, Map<String, Object> params) {
+		private String importObject(final ObjectImporter<Object, Object> importer, Object object, Map<String, String> params) {
 			try {
 				ImportObjectDetail<Object> detail = new ImportObjectDetail<Object>();
 				detail.setCreate(job.getType() == Type.CREATE);
@@ -487,13 +533,25 @@ public class ImportServiceImpl implements ImportService {
 			return CsvFileWriter.createCsvFileWriter(new FileWriter(getJobOutputFilePath(job.getId())));
 		}
 				
-		private void closeQueitly(CsvWriter writer) {
+		private void closeQuietly(CsvWriter writer) {
 			if (writer != null) {
 				try {
 					writer.close();
 				} catch (Exception e) {
 											
 				}
+			}
+		}
+
+		private void success() {
+			if (callback != null) {
+				callback.success();
+			}
+		}
+
+		private void failed(Throwable t) {
+			if (callback != null) {
+				callback.fail(t);
 			}
 		}
 	}
