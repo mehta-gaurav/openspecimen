@@ -48,7 +48,7 @@ angular.module('os.dashboard')
         return true;
       }
 
-      var href = "/#/dashboard-popout?dashletId=" + dashlet.config.id;
+      var href = "#/dashboard-popout?dashletId=" + dashlet.config.id;
       window.open(href, 'OpenSpecimen', 'width=900,height=600,scrollbars=yes');
     }
 
