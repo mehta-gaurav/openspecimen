@@ -1,6 +1,6 @@
 angular.module('os.biospecimen.specimenlist.list', ['os.biospecimen.models'])
   .controller('SpecimenListsCtrl', function(
-    $scope, $modal, $state, $stateParams, currentUser, reqBasedDistOrShip,
+    $scope, $modal, $state, $stateParams, $timeout, currentUser, reqBasedDistOrShip,
     SpecimensHolder, SpecimenList, DeleteUtil, Alerts) {
 
     function init() { 
@@ -14,15 +14,25 @@ angular.module('os.biospecimen.specimenlist.list', ['os.biospecimen.models'])
       }
 
       $scope.selection = resetSelection();
+      $scope.filterOpts = {};
       $scope.lists = {
         selectedList: undefined,
         myLists: [],
         sharedLists: [],
         reqBasedDistOrShip: (reqBasedDistOrShip.value == 'true'),
-        url: SpecimenList.url()
+        url: SpecimenList.url(),
+        filtersOpen: false
       }
 
+      $scope.$on('osRightDrawerOpen', toggleFiltersOpen);
+      $scope.$on('osRightDrawerClose', toggleFiltersOpen);
       loadAllSpecimenLists();
+    }
+
+    function toggleFiltersOpen() {
+      $timeout(function() {
+        $scope.lists.filtersOpen = !$scope.lists.filtersOpen;
+      });
     }
 
     function resetSelection() {
@@ -70,11 +80,18 @@ angular.module('os.biospecimen.specimenlist.list', ['os.biospecimen.models'])
       );
     }
 
-    function showSelectSpecimensErrMsg(msgCode) {
-      Alerts.error(msgCode);
-    };
+    function gotoView(state, params, msgCode) {
+      if (!$scope.selection.any) {
+        Alerts.error('specimen_list.' + msgCode);
+        return;
+      }
+
+      SpecimensHolder.setSpecimens($scope.selection.specimens);
+      $state.go(state, params);
+    }
 
     $scope.selectList = function (specimenList) {
+      $scope.filterOpts = {};
       $scope.selection = resetSelection();
       $scope.lists.selectedList = specimenList;
       specimenList.getSpecimens().then(
@@ -117,7 +134,7 @@ angular.module('os.biospecimen.specimenlist.list', ['os.biospecimen.models'])
 
     $scope.confirmRemoveSpecimens = function () {
       if (!$scope.selection.any) {
-        showSelectSpecimensErrMsg("specimen_list.no_specimens_for_deletion");
+        Alerts.error("specimen_list.no_specimens_for_deletion");
         return;
       }
 
@@ -132,33 +149,23 @@ angular.module('os.biospecimen.specimenlist.list', ['os.biospecimen.models'])
     }
 
     $scope.distributeSpecimens = function() {
-      if (!$scope.selection.any) {
-        showSelectSpecimensErrMsg("specimen_list.no_specimens_for_distribution");
-        return;
-      }
-
-      SpecimensHolder.setSpecimens($scope.selection.specimens);
-      $state.go('order-addedit', {orderId: ''});
+      gotoView('order-addedit', {orderId: ''}, 'no_specimens_for_distribution');
     }
 
     $scope.shipSpecimens = function() {
-      if (!$scope.selection.any) {
-        showSelectSpecimensErrMsg("specimen_list.no_specimens_for_shipment");
-        return;
-      }
-
-      SpecimensHolder.setSpecimens($scope.selection.specimens);
-      $state.go('shipment-addedit', {orderId: ''});
+      gotoView('shipment-addedit', {shipmentId: ''}, 'no_specimens_for_shipment');
     }
     
+    $scope.createAliquots = function() {
+      gotoView('specimen-bulk-create-aliquots', {}, 'no_specimens_to_create_aliquots');
+    }
+
+    $scope.createDerivatives = function() {
+      gotoView('specimen-bulk-create-derivatives', {}, 'no_specimens_to_create_derivatives');
+    }
+
     $scope.addEvent = function() {
-      if (!$scope.selection.any) {
-        showSelectSpecimensErrMsg('specimen_list.no_specimens_to_add_event');
-        return;
-      }
-      
-      SpecimensHolder.setSpecimens($scope.selection.specimens);
-      $state.go('bulk-add-event');
+      gotoView('bulk-add-event', {}, 'no_specimens_to_add_event');
     }
 
     init();

@@ -334,6 +334,15 @@ public class Utility {
 		}
 	}
 
+	public static boolean isQuoted(String input) {
+		if (StringUtils.isBlank(input) || input.length() < 2) {
+			return false;
+		}
+
+		return (input.charAt(0) == '"' && input.charAt(input.length() - 1) == '"') ||
+				(input.charAt(0) == '\'' && input.charAt(input.length() - 1) == '\'');
+	}
+
 	public static Map<String, Object> jsonToMap(String json) {
 		try {
 			if (StringUtils.isBlank(json)) {

@@ -24,6 +24,7 @@ import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocol;
 import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocolRegistration;
 import com.krishagni.catissueplus.core.biospecimen.domain.Specimen;
 import com.krishagni.catissueplus.core.biospecimen.domain.Visit;
+import com.krishagni.catissueplus.core.biospecimen.domain.factory.CpErrorCode;
 import com.krishagni.catissueplus.core.biospecimen.domain.factory.CprErrorCode;
 import com.krishagni.catissueplus.core.biospecimen.domain.factory.ParticipantErrorCode;
 import com.krishagni.catissueplus.core.biospecimen.domain.factory.SpecimenErrorCode;
@@ -161,12 +162,34 @@ public class AccessCtrlMgr {
 		return getEligibleCpIds(Resource.PARTICIPANT.getName(), new String[] {Operation.CREATE.getName()}, siteNames);
 	}
 
+	//
+	// Returns list of IDs of users who can perform "ops" on "resource" belonging
+	// to collection protocol identified by "cpId"
+	//
+	public List<Long> getUserIds(Long cpId, Resource resource, Operation[] ops) {
+		String[] opsStr = new String[ops.length];
+		for (int i = 0; i < ops.length; ++i) {
+			opsStr[i] = ops[i].getName();
+		}
+
+		return daoFactory.getSubjectDao().getSubjectIds(cpId, resource.getName(), opsStr);
+	}
+
 	public void ensureCreateCpRights(CollectionProtocol cp) {
 		ensureCpObjectRights(cp, Operation.CREATE);
 	}
 
 	public void ensureReadCpRights(CollectionProtocol cp) {
 		ensureCpObjectRights(cp, Operation.READ);
+	}
+
+	public void ensureUpdateCpRights(Long cpId) {
+		CollectionProtocol cp = daoFactory.getCollectionProtocolDao().getById(cpId);
+		if (cp == null) {
+			throw OpenSpecimenException.userError(CpErrorCode.NOT_FOUND, cpId);
+		}
+
+		ensureUpdateCpRights(cp);
 	}
 
 	public void ensureUpdateCpRights(CollectionProtocol cp) {
@@ -450,12 +473,16 @@ public class AccessCtrlMgr {
 	}
 
 	public List<Pair<Long, Long>> getReadAccessSpecimenSiteCps() {
+		return getReadAccessSpecimenSiteCps(null);
+	}
+
+	public List<Pair<Long, Long>> getReadAccessSpecimenSiteCps(Long cpId) {
 		if (AuthUtil.isAdmin()) {
 			return null;
 		}
 
 		String[] ops = {Operation.READ.getName()};
-		Set<Pair<Long, Long>> siteCpPairs = getVisitAndSpecimenSiteCps(ops);
+		Set<Pair<Long, Long>> siteCpPairs = getVisitAndSpecimenSiteCps(cpId, ops);
 		siteCpPairs.addAll(getDistributionOrderSiteCps(ops));
 
 		Set<Long> sitesOfAllCps = new HashSet<Long>();
@@ -516,11 +543,18 @@ public class AccessCtrlMgr {
 		return checkPhiAccess ? ensurePhiRights(cpr, op) : false;
 	}
 
-	private Set<Pair<Long, Long>> getVisitAndSpecimenSiteCps(String[] ops) {
+	private Set<Pair<Long, Long>> getVisitAndSpecimenSiteCps(Long cpId, String[] ops) {
 		Long userId = AuthUtil.getCurrentUser().getId();
 		String resource = Resource.VISIT_N_SPECIMEN.getName();
 
-		List<SubjectAccess> accessList = daoFactory.getSubjectDao().getAccessList(userId, resource, ops);
+		List<SubjectAccess> accessList = null;
+
+		if (cpId != null) {
+			accessList = daoFactory.getSubjectDao().getAccessList(userId, cpId, resource, ops);
+		} else {
+			accessList = daoFactory.getSubjectDao().getAccessList(userId, resource, ops);
+		}
+
 		Set<Pair<Long, Long>> siteCpPairs = new HashSet<Pair<Long, Long>>();
 		for (SubjectAccess access : accessList) {
 			Set<Site> sites = null;
@@ -530,13 +564,9 @@ public class AccessCtrlMgr {
 				sites = getUserInstituteSites(userId);
 			}
 
-			Long cpId = null;
-			if (access.getCollectionProtocol() != null) {
-				cpId = access.getCollectionProtocol().getId();
-			}
-
+			CollectionProtocol cp = access.getCollectionProtocol();
 			for (Site site : sites) {
-				siteCpPairs.add(Pair.make(site.getId(), cpId));
+				siteCpPairs.add(Pair.make(site.getId(), (cp != null) ? cp.getId() : null));
 			}
 		}
 
@@ -1039,6 +1069,19 @@ public class AccessCtrlMgr {
 		
 		throw OpenSpecimenException.userError(RbacErrorCode.ACCESS_DENIED);
 	}
+
+	///////////////////////////////////////////////////////////////////////
+	//                                                                   //
+	//	Custom form access control helper methods                        //
+	//                                                                   //
+	///////////////////////////////////////////////////////////////////////
+	public void ensureFormUpdateRights() {
+		User user = AuthUtil.getCurrentUser();
+		if (!user.isAdmin() && !user.canManageForms()) {
+			throw OpenSpecimenException.userError(RbacErrorCode.ACCESS_DENIED);
+		}
+	}
+
 
 	//
 	// Utility method
