@@ -1,0 +1,32 @@
+<div>
+  <div os-page-header>
+    <h3>
+      <span translate="specimens.search_results" translate-value-key="{{searchKey}}">Specimen Search Result for {{key}}</span>
+    </h3>
+  </div>
+
+  <div class="container">
+    <table class="os-table os-table-hover">
+      <thead class="os-table-head">
+        <tr class="row">
+          <th class="col col-xs-6">
+            <span translate="specimens.cp">Collection Protocol</span>
+          </th>
+          <th class="col col-xs-6">
+            <span translate="specimens.label">Label</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="os-table-body">
+        <tr class="row os-pointer-cursor" ng-repeat="spec in specimens" ng-click="showSpecimenDetail(spec)">
+          <td class="col col-xs-6">
+            {{spec.cpShortTitle}}
+          </td>
+          <td class="col col-xs-6">
+            {{spec.label}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
