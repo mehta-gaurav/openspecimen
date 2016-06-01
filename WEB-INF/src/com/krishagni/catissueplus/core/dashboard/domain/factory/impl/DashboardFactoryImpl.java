@@ -1,6 +1,6 @@
 package com.krishagni.catissueplus.core.dashboard.domain.factory.impl;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -100,7 +100,7 @@ public class DashboardFactoryImpl implements DashboardFactory {
 			return;
 		}
 
-		Set<Dashlet> dashlets = new HashSet<>();
+		Set<Dashlet> dashlets = new LinkedHashSet<>();
 		for (DashletDetail dashletDetail : dashletDetails) {
 			Dashlet dashlet = getDashlet(dashletDetail, dashboard, ose);
 			if (dashlet == null) {

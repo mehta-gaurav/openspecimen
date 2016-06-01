@@ -5,6 +5,7 @@ var osApp = angular.module('openspecimen', [
   'os.biospecimen',
   'os.administrative',
   'os.query',
+  'os.dashboard',
 
   'ngMessages',
   'ngCookies',
@@ -19,7 +20,8 @@ var osApp = angular.module('openspecimen', [
   'ui.autocomplete',
   'mgcrea.ngStrap.popover',
   'angular-loading-bar',
-  'pascalprecht.translate'
+  'pascalprecht.translate',
+  'chart.js'
   ]);
 
 osApp.config(function(

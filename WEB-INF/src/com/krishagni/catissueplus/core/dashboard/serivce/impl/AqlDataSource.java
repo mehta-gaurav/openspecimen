@@ -128,10 +128,10 @@ public class AqlDataSource implements DataSource {
 
 		if (series != null && !series.isEmpty()) {
 			selectList.append(", ").append(series.toString());
-			crosstabExpr.append("crosstab((1), 2, (3)");
+			crosstabExpr.append("crosstab((1), 2, (3))");
 		}
 
-		selectList.append(metric.toString());
+		selectList.append(", ").append(metric.toString());
 
 		return new StringBuilder()
 			.append("select ").append(selectList).append(" ")

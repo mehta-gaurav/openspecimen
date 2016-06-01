@@ -101,7 +101,8 @@
       "reset_password": "Reset Password",
       "print": "Print",
       "skip": "Skip",
-      "back": "Back"
+      "back": "Back",
+      "dashboard": "Dashboard"
     }
   },
 
@@ -220,7 +221,8 @@
       "edit": "Click to edit Collection Protocol",
       "reg_participants_count": "Count of Registered Participants",
       "collected_specimens_count": "Count of Collected Specimens",
-      "search": "Click to search Collection Protocols"
+      "search": "Click to search Collection Protocols",
+      "dashboard": "Dashboard"
     },
 
     "filter": {
