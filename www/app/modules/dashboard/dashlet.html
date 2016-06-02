@@ -27,7 +27,7 @@
             </li>
             <li ng-repeat="chartType in ctx.chartTypes | filter: ctx.chartTypesFilter">
               <a ng-click="selectChartType(chartType)">
-                <span>{{chartType.caption}}</span>
+                <span>{{'dashboard.chart_types.' + chartType.type | translate}}</span>
               </a>
             </li>
           </ul>

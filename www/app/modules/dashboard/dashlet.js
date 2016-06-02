@@ -2,12 +2,12 @@ angular.module('os.dashboard')
   .directive('osDashlet', function() {
 
     var chartTypes = [
-      {type: 'Bar',       caption: 'Bar',        multipleSeries: true},
-      {type: 'PolarArea', caption: 'Polar Area', multipleSeries: false},
-      {type: 'Line',      caption: 'Line',       multipleSeries: true},
-      {type: 'Radar',     caption: 'Radar',      multipleSeries: true},
-      {type: 'Pie',       caption: 'Pie',        multipleSeries: false},
-      {type: 'Doughnut',  caption: 'Doughnut',   multipleSeries: false}
+      {type: 'Bar',       multipleSeries: true},
+      {type: 'PolarArea', multipleSeries: false},
+      {type: 'Line',      multipleSeries: true},
+      {type: 'Radar',     multipleSeries: true},
+      {type: 'Pie',       multipleSeries: false},
+      {type: 'Doughnut',  multipleSeries: false}
     ];
 
     function transformToChartData(data) {

@@ -1852,6 +1852,16 @@
     "dashboard": {
       "title": "Dashboard",
       "zoom_in": "Zoom In",
-      "zoom_out": "Zoom Out"
+      "zoom_out": "Zoom Out",
+      "pop_out": "Pop Out",
+
+      "chart_types": {
+        "Bar": "Bar",
+        "PolarArea": "Polar Area",
+        "Line": "Line",
+        "Radar": "Radar",
+        "Pie": "Pie",
+        "Doughnut": "Doughnut"
+      }
     }
 }
