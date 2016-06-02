@@ -176,10 +176,12 @@
   </bean>
   
   <bean id="cpSvc" class="com.krishagni.catissueplus.core.biospecimen.services.impl.CollectionProtocolServiceImpl">
+    <property name="taskExecutor" ref="taskExecutor"/>
     <property name="cpFactory" ref="cpFactory"/>
     <property name="cpeFactory" ref="cpeFactory"/>
     <property name="srFactory" ref="srFactory"/>
     <property name="rbacSvc" ref="rbacSvc"/>
+    <property name="emailService" ref="emailService"/>
     <property name="daoFactory" ref="biospecimenDaoFactory"/>
   </bean>
   
@@ -227,6 +229,7 @@
         <bean class="com.krishagni.catissueplus.core.biospecimen.label.cpr.CpUniqueIdPpidToken"/>
         <bean class="com.krishagni.catissueplus.core.biospecimen.label.cpr.CpCodePpidToken"/>
         <bean class="com.krishagni.catissueplus.core.biospecimen.label.cpr.CpSiteCodePpidToken"/>
+        <bean class="com.krishagni.catissueplus.core.biospecimen.label.cpr.UniqueIdPpidToken"/>
         <bean class="com.krishagni.catissueplus.core.biospecimen.label.cpr.SiteCodePpidToken"/>
       </list>
     </property>
@@ -491,11 +494,16 @@
 
   <bean id="appCtxProvider" class="com.krishagni.catissueplus.core.common.OpenSpecimenAppCtxProvider"/>
   
-  <security:authentication-manager alias="authenticationManager">
+  <security:authentication-manager alias="authManager">
     <security:authentication-provider user-service-ref="userSvc" >
        <security:password-encoder ref="passwordEncoder"></security:password-encoder>
     </security:authentication-provider>
   </security:authentication-manager>
+  
+  <bean id="samlFilter" class="com.krishagni.catissueplus.rest.filter.SamlFilter">
+    <property name="daoFactory" ref="biospecimenDaoFactory"/>
+    <property name="authService" ref="userAuthService"/>
+  </bean>
   
   <bean id="authTokenFilter" class="com.krishagni.catissueplus.rest.filter.AuthTokenFilter">
     <property name="authService" ref="userAuthService"/>

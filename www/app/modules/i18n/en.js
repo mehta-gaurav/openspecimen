@@ -461,6 +461,8 @@
     "no_specimens_to_show": "No Specimens to Show",
     "aliquot_cnt": "Count of Aliquots",
     "qty_per_aliquot": "Quantity per Aliquot",
+    "aliquots_created": "Successfully created aliquots",
+    "derivatives_created": "Successfully created derived specimens",
     "close_parent_q": "Do you want to close parent specimen?",
     "concentration": "Concentration",
     "freeze_thaw_cycles": "Freeze/Thaw Cycles",
@@ -478,7 +480,7 @@
     "biohazards": "Biohazards",
     "created_on": "Created On",
     "concentration_unit": "&#181;g/&#181;l",
-    "copy_first_to_all": "Copy First To All",
+    "copy_first_to_all": "Copy first to all",
     "row": "Row",
     "column": "Column",
     "activity_full_info": "{{user}} created {{name}} on {{time | date: global.dateTimeFmt}}",
@@ -487,6 +489,8 @@
     "activity_info": "{{name}} created",
     "activity_status": "Activity Status",
     "location" : "Location",
+    "print": "Print",
+    "close_parent": "Close Parent",
 
     "reason_for_closing": "Reason for closing",
 
@@ -526,11 +530,11 @@
     "delete_specimens":  "Are you sure you want to delete selected specimens ?",
     "specimens_closed": "Selected specimens are closed successfully",
     "specimen_closed": "Specimen is closed successfully",
-    "create_derivative": "Create Derivative",
+    "create_derivative": "Create Derived Specimen",
     "create_aliquots": "Create Aliquots",
+    "create_derivatives": "Create Derived Specimens",
     "specimen_type": "Specimen Type",
     "anatomic_site": "Anatomic Site",
-    "freeze_thaw_cycle_lt_parent": "Child specimen's freeze/thaw cycle count can not be less than that of parent specimen",
 
     "col_event": {
       "title": "Collection Details",
@@ -576,8 +580,11 @@
     "errors": {
       "duplicate_labels": "One or more specimens using same label",
       "insufficient_qty": "Insufficient parent specimen quantity to create aliquots",
+      "insufficient_parent_qty": "Insufficient parent specimen {{label}} quantity to create child specimens",
       "created_on_lt_parent": "Created on time of specimen less than that of parent specimen",
       "created_on_gt_curr_time": "Created on time of specimen greater than current time",
+      "children_created_on_lt_parent": "Created on time of children less than that of parent specimen {{parentLabel}}",
+      "children_created_on_gt_curr_time": "Created on time of {{parentLabel}}'s children greater than current time",
       "aliquot_label_mismatch": "There is a mismatch in number of specified labels and aliquots"
     },
 
@@ -827,6 +834,7 @@
     "department": "Department",
     "address": "Address",
     "super_admin": "Super Administrator",
+    "manage_forms": "Manage Forms?",
     "login_details": "Login Details",
     "permissions": "Permissions",
     "login_name": "Login Name",
@@ -985,6 +993,7 @@
     "creating_hierarchy": "Create Hierarchy?",
     "num_of_containers": "Number of Containers",
     "hierarchy_created_successfully": "Container hierarchy of type {{typeName}} created successfully.",
+    "creation_success": "Container {{name}} successfully created.",
 
     "tooltip": {
       "view_details": "Click to view Container details",
@@ -1148,7 +1157,10 @@
     "confirm_delete": "{{entityType}} {{entityName}} will be deleted forever. Are you sure you want to proceed?",
     "entity_deleted": "{{entityType}} {{entityName}} deleted successfully.",
     "dependents_title": "Error: Cannot delete {{entityName}}",
-    "dependents_details": "Cannot delete {{entityType}} {{entityName}} because of following dependent objects"
+    "dependents_details": "Cannot delete {{entityType}} {{entityName}} because of following dependent objects",
+    "force_delete": "Type 'DELETE ANYWAY' in below textbox to delete CP including its dependent entities.",
+    "delete_anyway": "DELETE ANYWAY",
+    "delete_pending": "{{entityType}} {{entityName}} deletion taking longer time than anticipated. You'll receive an email when it gets completed"
   },
 
   "queries": {
@@ -1357,6 +1369,8 @@
   },
 
   "bulk_imports": {
+    "no_jobs": "No bulk imports jobs to show.",
+
     "job_submitted": "Bulk Import Job {{id}} Submitted",
     "select_extn": "Select Form",
     "input_file": "Input Records File",
@@ -1427,6 +1441,8 @@
     "description": "Description",
     "cp": "Collection Protocol",
     "label": "Label",
+    "type": "Type",
+    "anatomic_site": "Anatomic Site",
     "location": "Location",
     "quantity": "Quantity",
     "lineage": "Lineage",
@@ -1449,7 +1465,17 @@
     "checkout": "Checkout",
     "add_event": "Add Event",
     "location": "Storage Location",
-    "no_specimens_to_add_event": "Please select at least one specimen to add event"
+    "no_specimens_to_add_event": "Please select at least one specimen to add event",
+    "create_aliquots": "Create Aliquots",
+    "no_specimens_to_create_aliquots": "Please select at least one parent specimen to create aliquots",
+    "create_derivatives": "Create Derivatives",
+    "no_specimens_to_create_derivatives": "Please select at least one parent specimen to create derived specimens",
+    "filter_specimens": "Specimen Filters",
+    "creation_time": "Creation Time",
+    "last_updated": "Last Updated",
+    "specimens": "Specimens",
+    "filter_lists": "Filters",
+    "search_def_list_tip": "Use $$ to search users' default carts"
   },
 
   "orders": {
@@ -1704,7 +1730,9 @@
         "token_inactive_interval": "Session Timeout Limit (minutes)",
         "token_inactive_interval_desc": "Minutes of inactiveness after which a user is automatically logged out.",
         "verify_token_ip_address": "IP Address Validation",
-        "verify_token_ip_address_desc": "Check whether requests are made from the same IP address to which the login token was issued."
+        "verify_token_ip_address_desc": "Check whether requests are made from the same IP address to which the login token was issued.",
+        "saml_enable": "Enable SAML authentication",
+        "saml_enable_desc": "Enable single sign on using SAML based identity provider"
       },
       
       "administrative": {

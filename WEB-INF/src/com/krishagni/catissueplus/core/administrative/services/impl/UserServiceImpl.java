@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.saml.SAMLCredential;
 
 import com.krishagni.catissueplus.core.administrative.domain.ForgotPasswordToken;
 import com.krishagni.catissueplus.core.administrative.domain.Institute;
@@ -20,6 +21,7 @@ import com.krishagni.catissueplus.core.administrative.events.UserDetail;
 import com.krishagni.catissueplus.core.administrative.repository.UserDao;
 import com.krishagni.catissueplus.core.administrative.repository.UserListCriteria;
 import com.krishagni.catissueplus.core.administrative.services.UserService;
+import com.krishagni.catissueplus.core.auth.domain.AuthDomain;
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.PlusTransactional;
 import com.krishagni.catissueplus.core.common.access.AccessCtrlMgr;
@@ -92,6 +94,35 @@ public class UserServiceImpl implements UserService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		return daoFactory.getUserDao().getUser(username, DEFAULT_AUTH_DOMAIN);
 	}
+	
+	@Override
+	@PlusTransactional
+	public Object loadUserBySAML(SAMLCredential credential) throws UsernameNotFoundException {
+		//
+		// TODO: The domain name "saml" is hardcoded. We need to figure out whether
+		// domain name can be obtained from SAML credential
+		//
+		AuthDomain domain = daoFactory.getAuthDao().getAuthDomainByType("saml");
+
+		Map<String, String> props = domain.getAuthProvider().getProps();
+		String loginNameAttr = props.get("loginNameAttr");
+		String emailAttr     = props.get("emailAddressAttr");
+		
+		User user = null;
+		if (StringUtils.isNotBlank(loginNameAttr)) {
+			String loginName = credential.getAttributeAsString(loginNameAttr);
+			user = daoFactory.getUserDao().getUser(loginName, domain.getName());
+		} else if (StringUtils.isNotBlank(emailAttr)) {
+			String email = credential.getAttributeAsString(emailAttr);
+			user = daoFactory.getUserDao().getUserByEmailAddress(email);
+		}
+		
+		if (user == null) {
+			throw new UsernameNotFoundException("User not found");
+		}
+		
+		return user;
+	}
 
 	@Override
 	@PlusTransactional
@@ -115,7 +146,9 @@ public class UserServiceImpl implements UserService {
 				detail.setActivityStatus(Status.ACTIVITY_STATUS_PENDING.getStatus());
 			}
 			
-			User user = userFactory.createUser(detail);			
+			User user = userFactory.createUser(detail);
+			resetAttrs(user);
+
 			if (!isSignupReq) {
 				AccessCtrlMgr.getInstance().ensureCreateUserRights(user);
 			}
@@ -124,7 +157,7 @@ public class UserServiceImpl implements UserService {
 			ensureUniqueLoginNameInDomain(user.getLoginName(), user.getAuthDomain().getName(), ose);
 			ensureUniqueEmailAddress(user.getEmailAddress(), ose);
 			ose.checkAndThrow();
-		
+
 			daoFactory.getUserDao().saveOrUpdate(user);
 			if (isSignupReq) {
 				sendUserSignupEmail(user);
@@ -379,10 +412,12 @@ public class UserServiceImpl implements UserService {
 			} else {
 				user = userFactory.createUser(detail);
 			}
-			
+			resetAttrs(existingUser, user);
+
 			AccessCtrlMgr.getInstance().ensureUpdateUserRights(user);
 			
 			OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
+
 			ensureUniqueEmail(existingUser, user, ose);
 			ensureUniqueLoginName(existingUser, user, ose);
 			ose.checkAndThrow();
@@ -441,6 +476,23 @@ public class UserServiceImpl implements UserService {
 		props.put("user", user);
 		
 		emailService.sendEmail(USER_REQUEST_REJECTED_TMPL, new String[]{user.getEmailAddress()}, props);
+	}
+	
+	private void resetAttrs(User newUser) {
+		resetAttrs(null, newUser);
+	}
+	
+	private void resetAttrs(User existingUser, User newUser) {
+		if (AuthUtil.isAdmin()) {
+			return;
+		}
+
+		//
+		// Only super admin can update these attributes; therefore reset to
+		// their earlier value or default value
+		//
+		newUser.setAdmin(existingUser != null ? existingUser.isAdmin() : false);
+		newUser.setManageForms(existingUser != null ? existingUser.canManageForms() : false);
 	}
 	
 	private void ensureUniqueEmail(User existingUser, User newUser, OpenSpecimenException ose) {

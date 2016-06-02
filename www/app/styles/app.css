@@ -836,10 +836,14 @@ h4.os-sub-section-title, h5.os-sub-section-title, h6.os-sub-section-title {
   margin-bottom: 0px;
 }
 
-.os-ellipsis {
+.os-md-input .os-value, .os-ellipsis {
   overflow:hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.os-md-input .os-value {
+  display: block;
 }
 
 /**
@@ -1157,4 +1161,9 @@ h4.os-sub-section-title, h5.os-sub-section-title, h6.os-sub-section-title {
 .os-compact-form .panel-body {
   padding-top: 5px!important;
   padding-bottom: 5px!important;
+}
+
+.os-bottom-border {
+  padding-bottom: 5px;
+  border-bottom: 2px solid #ddd;
 }
