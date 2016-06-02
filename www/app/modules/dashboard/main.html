@@ -1,0 +1,18 @@
+<div>
+  <div os-page-header>
+    <ul os-breadcrumbs>
+      <li ng-repeat="breadcrumb in ctx.viewDetail.breadcrumbs">
+        <a ui-sref="{{breadcrumb.state}}">
+          <span translate="{{breadcrumb.title}}"></span>
+        </a>
+      </li>
+    </ul>
+    <h3>
+      <span translate="dashboard.title">Dashboard</span>
+    </h3>
+  </div>
+
+  <div class="container">
+    <os-dashboard dashboard="ctx.dashboard"></os-dashboard>
+  </div>
+</div>

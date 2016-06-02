@@ -1,40 +1,88 @@
-
 angular.module('os.dashboard')
-  .controller('DashletCtrl', function($scope, Dashboard) {
-    
-    function loadChartTypes() {
-      $scope.chartTypes = [
-        {name: 'Bar', caption: 'Bar'},
-        {name: 'PolarArea', caption: 'Polar Area'},
-        {name: 'Line', caption: 'Line'},
-        {name: 'Radar', caption: 'Radar'},
-        {name: 'Pie', caption: 'Pie'},
-        {name: 'Doughnut', caption: 'Doughnut'}
-      ];
-    }
+  .directive('osDashlet', function() {
 
-    function init() {
-      loadChartTypes();
-      getDashletData($scope.dashboard, $scope.dashlet);
-    }
+    var chartTypes = [
+      {type: 'Bar',       caption: 'Bar',        multipleSeries: true},
+      {type: 'PolarArea', caption: 'Polar Area', multipleSeries: false},
+      {type: 'Line',      caption: 'Line',       multipleSeries: true},
+      {type: 'Radar',     caption: 'Radar',      multipleSeries: true},
+      {type: 'Pie',       caption: 'Pie',        multipleSeries: false},
+      {type: 'Doughnut',  caption: 'Doughnut',   multipleSeries: false}
+    ];
 
-    function getDashletData(dashboard, dashlet) {
-      dashboard.getDashletData(dashlet.config.name).then(
-        function(data) {
-          //Showing first 10 character of category name
-          var categories = data.categories;
-          for (var i = 0; i < categories.length; i++) {
-            categories[i] = categories[i] == null ? null : categories[i].substring(0, 10);
-          }
-          dashlet.data = data;
+    function transformToChartData(data) {
+      var result = {categories: [], series: [], values: []};
+      if (!data) {
+        return result;
+      }
+
+      result.categories = data.categories;
+      angular.forEach(data.seriesData,
+        function(seriesValues, seriesName) {
+          result.series.push(seriesName);
+          result.values.push(seriesValues);
         }
       );
+
+      return result;
     }
 
-    $scope.changeType = function (dashlet, chartType) {
-      console.log(chartType);
-      dashlet.config.chartOpts.type = chartType.name;
-    }
+    return {
+      restrict: 'E',
 
-    init();
-  });
+      require: '?^osDashboard',
+
+      templateUrl : 'modules/dashboard/dashlet.html',
+
+      scope: {
+        dashlet: '='
+      },
+
+      link: function(scope, element, attrs, dashboardCtrl) {
+        scope.ctx = {
+          data: {categories: [], series: [], values: []},
+          options: scope.dashlet.config.chartOpts,
+          chartTypes: chartTypes,
+          chartTypesFilter: {}
+        };
+
+        scope.zoomIn = function() {
+          dashboardCtrl.zoomIn(scope.dashlet);
+          scope.dashlet.zoomedIn = true;
+        }
+
+        scope.zoomOut = function() {
+          dashboardCtrl.zoomOut(scope.dashlet);
+          scope.dashlet.zoomedIn = false;
+        }
+
+        scope.popOut = function() {
+          dashboardCtrl.popOut(scope.dashlet);
+        }
+
+        scope.selectChartType = function(chartType) {
+          if (!chartType.multipleSeries) {
+            var dataCopy = scope.ctx.dataCopy;
+            scope.ctx.data = {
+              categories: dataCopy.categories,
+              series: dataCopy.series[0],
+              values: dataCopy.values[0]
+            }
+          } else {
+            scope.ctx.data = scope.ctx.dataCopy;
+          }
+
+          scope.ctx.options.type = chartType.type;
+        }
+
+        scope.$watch('dashlet.data',
+          function(data) {
+            var data = scope.ctx.dataCopy = scope.ctx.data = transformToChartData(data);
+            if (data.series.length > 1) {
+              scope.ctx.chartTypesFilter = {multipleSeries: true};
+            }
+          }
+        );
+      }
+    };
+  })

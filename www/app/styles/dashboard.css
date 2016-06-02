@@ -1,9 +1,9 @@
-#dashlet .panel-heading > div {
-  padding-left: 0px;
-  padding-right: 0px;
+.dashlet .os-btns {
+  right: 10px;
 }
 
-#dashlet .panel-heading > .pull-right > div {
-  padding-left: 5px;
-  padding-right: 0px;
+.dashlet .os-btns .dropdown-toggle {
+  color: #777;
+  font-size: 20px;
+  margin-top: -2px;
 }

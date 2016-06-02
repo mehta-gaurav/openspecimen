@@ -1,13 +1,16 @@
-
 angular.module('os.dashboard')
-  .controller('DashboardPopoutCtrl', function($scope, dashboard, config) {
+  .controller('DashletPopoutCtrl', function($scope, $stateParams, dashboard) {
 
     function init() {
-      $scope.popWindow = true;
-      $scope.dashboard = dashboard;
-      $scope.dashlet = {
-        config : config
-      }
+      var dashlet = dashboard.getDashletByName($stateParams.dashletName);
+      dashlet.poppedOut = true;
+
+      $scope.ctx = {
+        dashboard: dashboard,
+        dashlet: dashlet
+      };
+
+      dashboard.executeDashlet(dashlet);
     }
 
     init();

@@ -221,8 +221,7 @@
       "edit": "Click to edit Collection Protocol",
       "reg_participants_count": "Count of Registered Participants",
       "collected_specimens_count": "Count of Collected Specimens",
-      "search": "Click to search Collection Protocols",
-      "dashboard": "Dashboard"
+      "search": "Click to search Collection Protocols"
     },
 
     "filter": {
@@ -1848,5 +1847,11 @@
         "max_recs_in_memory": "In-memory Records Limit",
         "max_recs_in_memory_desc": "Maximum number of query records that are allowed to be cached in-memory. When limit is reached, excessive records are spooled to disk"
       }
+    },
+
+    "dashboard": {
+      "title": "Dashboard",
+      "zoom_in": "Zoom In",
+      "zoom_out": "Zoom Out"
     }
 }

@@ -1,17 +1,13 @@
-
 angular.module('os.dashboard', ['os.common.models'])
   .config(function($stateProvider) {
     $stateProvider
-      .state('dashboard-popout', {
-        url: '/dashboard-popout?dashboardId&configId',
+      .state('dashlet-popout', {
+        url: '/dashlet-popout?dashboardId&dashletName',
         templateUrl: 'modules/dashboard/popout.html',
-        controller: 'DashboardPopoutCtrl',
+        controller: 'DashletPopoutCtrl',
         resolve: {
           dashboard: function($stateParams, Dashboard) {
-            return new Dashboard({id: $stateParams.dashboardId});
-          },
-          config: function ($stateParams, DashletConfig) {
-            return DashletConfig.getById($stateParams.configId);
+            return Dashboard.getById($stateParams.dashboardId);
           }
         },
         parent: 'signed-in'

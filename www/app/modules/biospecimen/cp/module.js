@@ -159,13 +159,17 @@ angular.module('os.biospecimen.cp',
       })
       .state('cp-dashboard', {
         url: '/dashboard',
-        templateUrl: 'modules/dashboard/dashboard.html',
+        templateUrl: 'modules/dashboard/main.html',
         controller: 'DashboardCtrl',
         resolve: {
-          dashboardDetail: function() {
+          viewDetail: function() {
             return {
               breadcrumbs: [{state: 'cp-list', title: 'cp.list'}],
             }
+          },
+
+          dashboard: function(Dashboard) {
+            return Dashboard.getById(1);
           }
         },
         parent: 'cps'
