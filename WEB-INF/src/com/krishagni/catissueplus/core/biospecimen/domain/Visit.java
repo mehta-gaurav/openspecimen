@@ -468,11 +468,11 @@ public class Visit extends BaseExtensionEntity {
 		if (!isPrePrintSpecimenLabelEnabled()) {
 			return false;
 		}
-		
+
 		if (StringUtils.isBlank(prevStatus)) {
-			return !getStatus().equals(VISIT_STATUS_MISSED);
+			return !isMissed();
 		} else {
-			return prevStatus.equals(VISIT_STATUS_MISSED) && !getStatus().equals(VISIT_STATUS_MISSED);
+			return isMissed(prevStatus) && !isMissed();
 		}
 	}
 	
@@ -576,26 +576,21 @@ public class Visit extends BaseExtensionEntity {
 	}
 
 	private boolean shouldPrintLabel(String prevStatus) {
-		if (!isPrintLabelEnabled()) {
-			return false;
-		}
-
-		if (getStatus().equals(VISIT_STATUS_MISSED)) {
+		if (!isPrintLabelEnabled() || isMissed()) {
 			return false;
 		}
 
 		VisitNamePrintMode printMode = getCpEvent().getVisitNamePrintModeToUse();
 		if (StringUtils.isBlank(prevStatus)) {
-			return getStatus().equals(VISIT_STATUS_COMPLETED) || printMode.equals(VisitNamePrintMode.PRE_PRINT);
-		} else {
-			if (printMode.equals(VisitNamePrintMode.ON_COMPLETION) &&
-				!prevStatus.equals(VISIT_STATUS_COMPLETED) && getStatus().equals(VISIT_STATUS_COMPLETED)) {
-				return true;
-			}
+			return isCompleted() || printMode.equals(VisitNamePrintMode.PRE_PRINT);
+		}
 
-			if (printMode.equals(VisitNamePrintMode.PRE_PRINT) && prevStatus.equals(VISIT_STATUS_MISSED)) {
-				return true;
-			}
+		if (printMode.equals(VisitNamePrintMode.PRE_PRINT) && isMissed(prevStatus)) {
+			return true;
+		}
+
+		if (printMode.equals(VisitNamePrintMode.ON_COMPLETION) && !isCompleted(prevStatus) && isCompleted()) {
+			return true;
 		}
 
 		return false;

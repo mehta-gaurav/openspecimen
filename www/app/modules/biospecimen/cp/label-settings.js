@@ -4,6 +4,7 @@ angular.module('os.biospecimen.cp.labels', ['os.biospecimen.models'])
 
     function init() {
       $scope.settingCtx = {};
+      $scope.visitNamePrintModes = PvManager.getPvs('visit-name-print-modes');
       $scope.spmnLabelPrePrintModes = PvManager.getPvs('specimen-label-pre-print-modes');
       
       if (!cp.spmnLabelPrintSettings || cp.spmnLabelPrintSettings.length == 0) {
