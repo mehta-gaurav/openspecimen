@@ -9,6 +9,9 @@ angular.module('os.biospecimen.cp',
     'os.biospecimen.cp.consents',
     'os.biospecimen.cp.events',
     'os.biospecimen.cp.specimens',
+    'os.biospecimen.cp.settings',
+    'os.biospecimen.cp.entities',
+    'os.biospecimen.cp.labels',
     'os.biospecimen.cp.catalog'
   ])
 
@@ -237,10 +240,23 @@ angular.module('os.biospecimen.cp',
         },
         controller: 'CpSpecimensCtrl'
       })
-      .state('cp-detail.catalog-settings', {
+      .state('cp-detail.settings', {
+        url: '/settings',
+        templateUrl: 'modules/biospecimen/cp/settings.html',
+        parent: 'cp-detail',
+        controller: 'CpSettingsCtrl',
+        abstract: true
+      })
+      .state('cp-detail.settings.labels', {
+        url: '/label-settings',
+        templateUrl: 'modules/biospecimen/cp/label-settings.html',
+        parent: 'cp-detail.settings',
+        controller: 'CpLabelSettingsCtrl'
+      })
+      .state('cp-detail.settings.catalog', {
         url: '/catalog-settings',
         templateUrl: 'modules/biospecimen/cp/catalog-settings.html',
-        parent: 'cp-detail',
+        parent: 'cp-detail.settings',
         resolve: {
           catalogSetting: function(cp) {
             if (cp.catalogSetting) {

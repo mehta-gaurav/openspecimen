@@ -85,6 +85,20 @@
     </addColumn>
   </changeSet>
 
+  <changeSet author="vpawar" id="Track when specimen list/cart was last updated">
+    <addColumn tableName="CATISSUE_SPECIMENLIST_TAGS">
+      <column name="LAST_UPDATED_ON" type="${nullable.ts.type}">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="vpawar" id="Update last updated on to start with created on time for existing carts">
+    <sql>
+      update catissue_specimenlist_tags set last_updated_on = created_on;
+    </sql>
+  </changeSet>
+
   <changeSet author="vgaikwad" id="Column to specify visit name print mode at CP level">
     <addColumn tableName="CATISSUE_COLLECTION_PROTOCOL">
       <column name="VISIT_NAME_PRINT_MODE" type="${text.type}(32)"/>

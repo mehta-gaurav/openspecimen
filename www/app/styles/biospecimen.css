@@ -229,23 +229,23 @@
   padding-top: 10px;
 }
 
-.os-spmn-coll-detail label {
+.os-md-form label {
   color: #666;
 }
 
-.os-spmn-coll-detail .input {
+.os-md-form .input {
   margin-top: -17px;
 }
 
-.os-spmn-coll-detail .form-group {
+.os-md-form .form-group {
   margin-bottom: 30px;
 }
 
-.os-spmn-coll-detail .os-md-input.read {
+.os-md-form .os-md-input.read {
   margin-top: 7px;
 }
 
-.os-spmn-coll-detail .input, .os-spmn-coll-detail .read {
+.os-md-form .input, .os-md-form .read {
   padding-left: 0px;
 }
 
@@ -317,4 +317,5 @@
 
 .os-ctrl-padding-top {
   padding-top: 8px;
+  padding-right: 8px;
 }
